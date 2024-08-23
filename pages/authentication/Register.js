@@ -9,8 +9,10 @@ import { Button, Card, CardBody, Divider, Input } from "@nextui-org/react";
 import { addDoc, collection } from "firebase/firestore";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Register(props) {
+    const router = useRouter();
     const [hidden, setHidden] = useState(false);
     const [registered, setRegistered] = useState(false);
     const [input, setInput] = useState({
@@ -18,6 +20,7 @@ export default function Register(props) {
         email: "",
         password: ""
     });
+    const [loading, setLoading] = useState(false);
     function toggleVisibility() {
         setHidden(!hidden);
     }
@@ -28,22 +31,22 @@ export default function Register(props) {
     }
 
     async function handleSubmit() {
-        if (!registered) {
+        if (!registered && !loading) {
             try {
+                setLoading(true);
                 setRegistered(true);
-                // Create user with Firebase Authentication
                 const userCredential = await doCreateUserWithEmailAndPassword(input.email, input.password);
-                
-                // Add user to Firestore, using the UID from Authentication
                 await addDoc(collection(db, 'users'), {
                     uid: userCredential.user.uid,
                     username: input.username,
                     email: input.email,
-                    // Don't store the password in Firestore
                 });
+                router.push("/");
             } catch (e) {
                 console.error("Error during registration:", e);
                 setRegistered(false); // Reset if there's an error
+            } finally {
+                setLoading(false);
             }
         }
     }
@@ -84,7 +87,7 @@ export default function Register(props) {
                     />
                     <Input
                         label="Password"
-                        type={hidden ? "password" : "text"}
+                        type={hidden ? "text" : "password"}
                         value={input.password}
                         name="password"
                         onChange={handleChange}
@@ -102,7 +105,7 @@ export default function Register(props) {
                             </button>
                         }
                     />
-                    <Button onClick={handleSubmit} className="w-2 mx-auto mt-5" variant="solid" color="primary">Login</Button>
+                    <Button onClick={handleSubmit} className="w-2 mx-auto mt-5" variant="solid" color="primary" isLoading={loading}>Login</Button>
                     <p className="text-center text-xs text-gray-500 mt-2">
                         Have an account? <Link className="hover:underline" href="/authentication/Login">Login here</Link>
                     </p>

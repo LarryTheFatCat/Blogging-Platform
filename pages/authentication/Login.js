@@ -5,10 +5,37 @@ import Link from "next/link";
 import { useState } from "react";
 import Hidden from "@/components/Icons/PasswordHiddenIcon";
 import PasswordVisible from "@/components/Icons/PasswordVisibleIcon";
+import { doSignInWithEmailAndPassword } from "@/utils/ConfigFunctions";
+import { useRouter } from "next/router";
+import { auth } from "@/utils/ConfigFunctions";
 
 export default function Login(props) {
+    const router = useRouter();
     const [hidden, setHidden] = useState(true);
+    const [input, setInput] = useState({
+        email: "",
+        password: ""
+    });
+    const [loading, setLoading] = useState(false);
+    const [registered, setRegistered] = useState(false);
     const toggleVisibility = () => setHidden(!hidden);
+
+    function handleChange(e) {
+        let { name, value } = e.target;
+        setInput({ ...input, [name]: value });
+    }
+
+    async function handleLogin() {
+        if (!registered && !loading) {
+            setLoading(true);
+            setRegistered(true);
+            const userId = await doSignInWithEmailAndPassword(input.email, input.password);
+            // console.log(userCredentials.user.uid);
+            await doSignInWithEmailAndPassword(input.email, input.password);
+            router.push(`/${userId.user.uid}/home`)
+        }
+    }
+
     return (
         <div className="flex justify-center items-center h-screen" {...props}>
             <Card className="w-96 p-5">
@@ -20,6 +47,9 @@ export default function Login(props) {
                     <Input
                         label="Email"
                         type="email"
+                        value={input.email}
+                        name="email"
+                        onChange={handleChange}
                         labelPlacement="outside"
                         placeholder="some.cool@email.com"
                         variant="faded"
@@ -29,6 +59,9 @@ export default function Login(props) {
                     <Input
                         label="Password"
                         type={hidden ? "password" : "text"}
+                        value={input.password}
+                        name="password"
+                        onChange={handleChange}
                         labelPlacement="outside"
                         placeholder="CoolPassword123!"
                         variant="faded"
@@ -43,9 +76,7 @@ export default function Login(props) {
                             </button>
                         }
                     />
-                    <Link className="mx-auto mt-5" href="/"> {/**@TODO: Implement redirect based on uid generated in database */}
-                        <Button className="w-2" variant="solid" color="primary">Login</Button>
-                    </Link>
+                    <Button className="w-2 mx-auto mt-5" variant="solid" color="primary" onClick={handleLogin} isLoading={loading}>Login</Button>
                     <p className="text-center text-xs text-gray-500 mt-2">
                         No account? <Link className="hover:underline" href="/authentication/Register">Register here.</Link>
                     </p>
