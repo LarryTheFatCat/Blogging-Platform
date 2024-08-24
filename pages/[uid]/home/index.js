@@ -1,9 +1,9 @@
-import NavBar from "@/components/MainPageComponents/Navbar";
+import NavBar from "@/components/MainPageComponents/Navigation/Navbar";
 
 export default function Home() {
     return (
         <>
-        <NavBar  />
+            <NavBar />
             <div className="mx-20 mt-10">
                 <div className="grid grid-cols-3">
                     <div className="col-span-1">

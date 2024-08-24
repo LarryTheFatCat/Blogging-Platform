@@ -14,19 +14,19 @@ import {
     DropdownSection,
     User
 } from "@nextui-org/react";
-import { SearchIcon } from "../Icons/SearchIcon";
-import UploadIcon from "../Icons/UploadIcon";
+import { SearchIcon } from "../../Icons/SearchIcon";
+import UploadIcon from "../../Icons/UploadIcon";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { auth } from "@/utils/Firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import SettingsIcon from "../Icons/SettingsIcon";
-import HelpIcon from "../Icons/HelpIcon";
-import NotificationsIcon from "../Icons/NotificationsIcon";
-import SignOutIcon from "../Icons/SignOutIcon";
+import SettingsIcon from "../../Icons/SettingsIcon";
+import HelpIcon from "../../Icons/HelpIcon";
+import NotificationsIcon from "../../Icons/NotificationsIcon";
+import SignOutIcon from "../../Icons/SignOutIcon";
 import { doSignOut } from "@/utils/ConfigFunctions";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import ProfileIcon from "../Icons/ProfileIcon";
+import ProfileIcon from "../../Icons/ProfileIcon";
 import { storage } from "@/utils/Firebase";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
 
@@ -100,7 +100,7 @@ export default function NavBar() {
                 </Button>
             </NavbarBrand>
             <NavbarContent>
-                <Button variant="light" className="bg-blue-100" text-blue-800 onClick={() => setDisplaySearchBar(!displaySearchBar)}>
+                <Button variant="light" className={`sm:hidden ${displaySearchBar ? "hidden" : "flex"}`} text-blue-800 onClick={() => setDisplaySearchBar(!displaySearchBar)}>
                     <SearchIcon />
                 </Button>
             </NavbarContent>
