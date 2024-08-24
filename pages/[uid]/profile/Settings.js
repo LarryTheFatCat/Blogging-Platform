@@ -11,22 +11,6 @@ export default function Settings() {
     return (
         <>
         {isDesktop ? <NavBar /> : <MobileNavBar />}
-            {/* <div className="grid grid-cols-3 gap-5" style={{ display: 'flex', justifyContent: 'center' }}>
-                <div className="grid col-span-1">
-                    <Card className="w-60">
-                        <CardHeader>
-                            Hello
-                        </CardHeader>
-                    </Card>
-                </div>
-                <div className="grid col-span-2">
-                    <Card className="w-96">
-                        <CardHeader>
-                            Hello
-                        </CardHeader>
-                    </Card>
-                </div>
-            </div> */}
         </>
     )
 }
