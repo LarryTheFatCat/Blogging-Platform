@@ -32,7 +32,7 @@ export default function Login(props) {
             const userId = await doSignInWithEmailAndPassword(input.email, input.password);
             // console.log(userCredentials.user.uid);
             await doSignInWithEmailAndPassword(input.email, input.password);
-            router.push(`/${userId.user.uid}/home`)
+            router.push(`/${userId.user.uid}/home`);
         }
     }
 

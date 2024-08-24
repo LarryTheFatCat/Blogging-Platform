@@ -6,10 +6,10 @@ import UsernameIcon from "@/components/Icons/UsernameIcon";
 import { doCreateUserWithEmailAndPassword } from "@/utils/ConfigFunctions";
 import { db } from "@/utils/Firebase";
 import { Button, Card, CardBody, Divider, Input } from "@nextui-org/react";
-import { addDoc, collection } from "firebase/firestore";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { doc, setDoc } from "firebase/firestore";   
 
 export default function Register(props) {
     const router = useRouter();
@@ -36,10 +36,35 @@ export default function Register(props) {
                 setLoading(true);
                 setRegistered(true);
                 const userCredential = await doCreateUserWithEmailAndPassword(input.email, input.password);
-                await addDoc(collection(db, 'users'), {
-                    uid: userCredential.user.uid,
+                const uid = userCredential.user.uid;
+                await setDoc(doc(db, 'users', uid), {
+                    uid: uid,
                     username: input.username,
                     email: input.email,
+                    profilePicture: "",
+                    bio: "",
+                    followers: [],
+                    following: [],
+                    posts: [],
+                    savedPosts: [],
+                    likedPosts: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    isAdmin: false,
+                    isVerified: false,
+                    isBanned: false,
+                    isDeleted: false,
+                    isActive: true,
+                    gender: "",
+                    dob: "",
+                    phone: "",
+                    geoLocation: "",
+                    website: "",
+                    socialMedia: "",
+                    interests: [],
+                    skills: [],
+                    education: [],
+                    work: [],
                 });
                 router.push("/");
             } catch (e) {
