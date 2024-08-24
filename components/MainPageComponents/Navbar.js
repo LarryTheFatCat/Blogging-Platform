@@ -130,7 +130,7 @@ export default function NavBar() {
                 <NavbarItem>
                     <Dropdown showArrow className="border-2 border-default-200 drop-shadow-xl">
                         <DropdownTrigger>
-                            <Avatar />
+                            <Avatar src={profilePicture} />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="User menu">
                             <DropdownSection title="Account" showDivider>
