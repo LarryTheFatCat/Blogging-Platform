@@ -11,7 +11,6 @@ function PageNotFound() {
                 src={nopage.src}
                 alt="404 Not Found"
                 width={1200}
-                height={675} // Assuming a 16:9 aspect ratio, adjust if needed
             />
             <Button 
                 onClick={() => router.back()} 

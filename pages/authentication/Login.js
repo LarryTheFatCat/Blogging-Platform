@@ -12,6 +12,7 @@ import { auth } from "@/utils/ConfigFunctions";
 export default function Login(props) {
     const router = useRouter();
     const [hidden, setHidden] = useState(true);
+    const [errorState, setErrorState] = useState(false);
     const [input, setInput] = useState({
         email: "",
         password: ""
@@ -27,15 +28,19 @@ export default function Login(props) {
 
     async function handleLogin() {
         if (!registered && !loading) {
-            setLoading(true);
-            setRegistered(true);
-            const userId = await doSignInWithEmailAndPassword(input.email, input.password);
+            try {
+                const userId = await doSignInWithEmailAndPassword(input.email, input.password);
+                setLoading(true);
+                setRegistered(true);
+                router.push(`/${userId.user.uid}/home`);
+            } catch (errorMessage) {
+                setErrorState(true);
+            } finally {
+                setLoading(false);
+            }
             // console.log(userCredentials.user.uid);
-            await doSignInWithEmailAndPassword(input.email, input.password);
-            router.push(`/${userId.user.uid}/home`);
         }
     }
-
     return (
         <div className="flex justify-center items-center h-screen" {...props}>
             <Card className="w-96 p-5">
@@ -45,26 +50,30 @@ export default function Login(props) {
                 <Divider className="my-4" />
                 <CardBody>
                     <Input
+                        isInvalid={errorState}
                         label="Email"
                         type="email"
                         value={input.email}
                         name="email"
+                        color={errorState ? "danger" : "default"}
                         onChange={handleChange}
                         labelPlacement="outside"
+                        errorMessage="Invalid email / password"
                         placeholder="some.cool@email.com"
-                        variant="faded"
                         className="mb-4"
                         startContent={<MailIcon className="text-2xl text-neutral-500" />}
                     />
                     <Input
+                        isInvalid={errorState}
                         label="Password"
                         type={hidden ? "password" : "text"}
+                        color={errorState ? "danger" : "default"}
+                        errorMessage="Invalid email / password"
                         value={input.password}
                         name="password"
                         onChange={handleChange}
                         labelPlacement="outside"
                         placeholder="CoolPassword123!"
-                        variant="faded"
                         startContent={<PasswordIcon className="text-2xl text-neutral-500" />}
                         endContent={
                             <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">

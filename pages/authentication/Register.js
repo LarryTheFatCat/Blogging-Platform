@@ -9,10 +9,11 @@ import { Button, Card, CardBody, Divider, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { doc, setDoc } from "firebase/firestore";   
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Register(props) {
     const router = useRouter();
+    const [errorState, setErrorState] = useState(false);
     const [hidden, setHidden] = useState(false);
     const [registered, setRegistered] = useState(false);
     const [input, setInput] = useState({
@@ -68,7 +69,7 @@ export default function Register(props) {
                 });
                 router.push("/");
             } catch (e) {
-                console.error("Error during registration:", e);
+                setErrorState(true);
                 setRegistered(false); // Reset if there's an error
             } finally {
                 setLoading(false);
@@ -86,6 +87,9 @@ export default function Register(props) {
                 <Divider className="my-4" />
                 <CardBody>
                     <Input
+                        isInvalid={errorState}
+                        errorMessage="Incorrect Username / Already in use"
+                        color={errorState ? "danger" : "default"}
                         label="Username"
                         type="text"
                         value={input.username}
@@ -99,6 +103,9 @@ export default function Register(props) {
                     />
 
                     <Input
+                        isInvalid={errorState}
+                        errorMessage="Incorrect Username / Already in use"
+                        color={errorState ? "danger" : "default"}
                         label="Email"
                         type="email"
                         value={input.email}
@@ -111,6 +118,9 @@ export default function Register(props) {
                         startContent={<MailIcon className="text-2xl text-neutral-500" />}
                     />
                     <Input
+                        isInvalid={errorState}
+                        errorMessage="Incorrect Username / Already in use"
+                        color={errorState ? "danger" : "default"}
                         label="Password"
                         type={hidden ? "text" : "password"}
                         value={input.password}

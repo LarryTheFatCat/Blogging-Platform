@@ -108,7 +108,7 @@ export default function NavBar() {
                     <Input
                         type="text"
                         placeholder="Search"
-                        className="w-[35rem] focus:text-default-500"
+                        className="w-[40rem] focus:text-default-500"
                         color="primary"
                         size="2xl"
                         startContent={<SearchIcon />}
