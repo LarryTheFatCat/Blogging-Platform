@@ -219,9 +219,9 @@ export default function AuthenticationUI() {
     }
     return (
         <div className="bg-desktop-background bg-cover h-screen bg-repeat flex justify-center items-center">
-            <div className="sm:p-10 backdrop-filter backdrop-blur-sm border-2 border-white rounded-3xl">
+            <div className="sm:px-40 sm:py-20 backdrop-filter backdrop-blur-sm border-2 border-white rounded-3xl">
                 {register ?
-                    <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[600px]">
+                    <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[500px]">
                         <CardHeader>
                             <h1 className="text-2xl font-bold capitalize tracking-wider max-sm:ml-2">
                                 Register
@@ -280,7 +280,7 @@ export default function AuthenticationUI() {
                         </CardBody>
                     </Card>
                     :
-                    <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[600px]">
+                    <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[400px]">
                         <CardHeader>
                             <h1 className="text-2xl font-bold capitalize tracking-wider">
                                 Login
@@ -316,7 +316,7 @@ export default function AuthenticationUI() {
                                 isRequired
                                 isClearable
                             />
-                            <Button onClick={authenticateLoginInfo} color="primary" variant="solid" className="w-4/6 sm:w-5/6 md:w-96 mx-auto">
+                            <Button onClick={authenticateLoginInfo} color="primary" variant="solid" className="sm:w-5/6 mx-auto">
                                 Login
                             </Button>
                             <div className="relative py-4">
