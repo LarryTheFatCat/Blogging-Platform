@@ -122,6 +122,7 @@ export default function AuthenticationUI() {
     const registerAccountToFireBase = async () => {
         try {
             if (emailRegex.test(registerInput.email) && registerInput.username.length > 3 && registerInput.password.length >= 8) {
+                setLoading(true);
                 let userCreds = await doCreateUsersWithEmailAndPassword(registerInput.email, registerInput.password);
                 const uid = userCreds.user.uid;
                 await setDoc(doc(db, "users", uid), {
@@ -130,6 +131,7 @@ export default function AuthenticationUI() {
                     username: registerInput.username,
                     uid: uid
                 }).then(() => {
+                    setLoading(false);
                     setRegister(false);
                 })
             } else if (registerInput.username.length === 0 || registerInput.password.length === 0 || registerInput.email.length === 0) {
