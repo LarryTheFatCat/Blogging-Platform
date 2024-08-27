@@ -1,12 +1,11 @@
-import { doCreateUsersWithEmailAndPassword, doSignInUsersWithEmailAndPassword, doSignInWithPopUp } from "@/utils/ConfigFunctions";
+import { doCreateUsersWithEmailAndPassword, doSignInUsersWithEmailAndPassword } from "@/utils/ConfigFunctions";
 import { auth, db } from "@/utils/firebase";
-import { Button, Card, CardBody, CardHeader, Divider, Input } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { addDoc, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import GoogleButton from "react-google-button";
-import { FaGoogle } from "react-icons/fa";
 
 export default function AuthenticationUI() {
     const router = useRouter();
