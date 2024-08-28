@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth, storage } from "@/utils/firebase";
 import { Avatar, Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
 
 export default function SettingsContent() {
+    const [photoURL, setPhotoURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
 
     const fileUploadDialog = async () => {
@@ -15,7 +16,7 @@ export default function SettingsContent() {
                     {
                         description: 'Images',
                         accept: {
-                            'image/*': ['.png', '.jpg', '.jpeg']
+                            'image/*': ['.png'],
                         }
                     },
                 ],
@@ -25,38 +26,65 @@ export default function SettingsContent() {
             handleFile(file);
         } catch (e) {
             console.log(e);
+        } finally {
+            alert("Fuck you again this is the alert dialog for uploading")
         }
     }
 
     const handleFile = (file) => {
-        const newFileName = `profile_${Date.now()}_${file.name}`;
-        const renamedFile = new File([file], newFileName, { type: file.type });
-        setImageUpload(renamedFile);
-        uploadImage(renamedFile); // Pass the file directly to uploadImage
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                const newFileName = `${uid}`;
+                const renamedFile = new File([file], newFileName, { type: file.type });
+                setImageUpload(renamedFile);
+                uploadImage(renamedFile);
+            }
+        })
+        return () => unsubscribe();
     }
 
     const uploadImage = (file) => {
-        if (!file) return;
-        
+        if (file === null) return;
         const user = auth.currentUser;
         if (!user) {
             console.error("No user logged in");
             return;
         }
 
-        const imageRef = ref(storage, `${user.uid}/${file.name}`);
+        const imageRef = ref(storage, `${file.name}`);
         uploadBytes(imageRef, file)
             .then(() => getDownloadURL(imageRef))
             .then((url) => {
                 return updateProfile(user, { photoURL: url });
             })
             .then(() => {
-                console.log("Profile picture updated successfully");
-                // You might want to update the UI or state here
+                console.log("fuck you this works");
             })
             .catch((error) => {
-                console.error("Error uploading image:", error);
+                console.error(error);
             });
+    }
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setPhotoURL(user.photoURL);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const deleteProfilePicture = () => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            const deleteImageRef = ref(storage, `${user.uid}`);
+            deleteObject(deleteImageRef).then(() => {
+                alert("file deleted successfully");
+                setPhotoURL("");
+            }).catch((error) => {
+                alert(error);
+            })
+        })
+        return () => unsubscribe();
     }
 
     return (
@@ -79,7 +107,7 @@ export default function SettingsContent() {
                 <CardBody>
                     <div className="pl-3">
                         <div className="flex">
-                            <Avatar className="w-24 h-24" />
+                            <Avatar src={photoURL} className="w-24 h-24" />
                             <div className="grid grid-cols-1 pl-2 pt-2">
                                 <p className="pt-3 font-bold ">
                                     Profile Picture
@@ -91,7 +119,7 @@ export default function SettingsContent() {
                             <Button size="md" onClick={fileUploadDialog} className="left-56 mt-5">
                                 Upload new picture
                             </Button>
-                            <Button variant="bordered" size="md" onClick={fileUploadDialog} className="left-60 mt-5 border-red-500 text-red-500 hover:border-red-950 hover:text-red-950">
+                            <Button variant="bordered" size="md" onClick={deleteProfilePicture} className="left-60 mt-5 border-red-500 text-red-500 hover:border-red-950 hover:text-red-950">
                                 Delete
                             </Button>
                         </div>
