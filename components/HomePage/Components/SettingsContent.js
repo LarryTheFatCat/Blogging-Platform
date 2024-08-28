@@ -26,8 +26,6 @@ export default function SettingsContent() {
             handleFile(file);
         } catch (e) {
             console.log(e);
-        } finally {
-            alert("Fuck you again this is the alert dialog for uploading")
         }
     }
 
@@ -57,9 +55,6 @@ export default function SettingsContent() {
             .then(() => getDownloadURL(imageRef))
             .then((url) => {
                 return updateProfile(user, { photoURL: url });
-            })
-            .then(() => {
-                console.log("fuck you this works");
             })
             .catch((error) => {
                 console.error(error);
