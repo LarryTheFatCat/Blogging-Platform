@@ -1,10 +1,11 @@
 import { auth } from "@/utils/firebase";
-import { Button, Card, CardBody, CardHeader, Divider, User } from "@nextui-org/react";
+import { avatar, Button, Card, CardBody, CardHeader, Divider, User } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { FaUser, FaHome, FaCompass, FaList, FaBookmark, FaCog } from 'react-icons/fa';
 
 export default function Sidebar({ onItemSelect }) {
+    const [avatarURL, setAvatarURL] = useState(null);
     const [userInfo, setUserInfo] = useState({
         username: "",
         email: "",
@@ -22,19 +23,18 @@ export default function Sidebar({ onItemSelect }) {
             if (user) {
                 const email = user.email;
                 const displayName = user.displayName;
-                setUserInfo(
-                    {
-                        email: email,
-                        username: displayName,
-                    }
-                );
+                const photoURL = user.uid;
+                setUserInfo({
+                    email: email,
+                    username: displayName,
+                });
+                setAvatarURL(user.photoURL);
             } else {
-                setAccountValues(
-                    {
-                        email: "N/A - Please retry again...",
-                        username: "N/A - Please retry again...",
-                    }
-                );
+                setUserInfo({
+                    email: "N/A - Please retry again...",
+                    username: "N/A - Please retry again...",
+                });
+                setAvatarURL(null);
             }
         });
 
@@ -49,7 +49,7 @@ export default function Sidebar({ onItemSelect }) {
                             Welcome {userInfo.username}
                         </h1>
                     </div>
-                    <User className="justify-start pt-5 pl-3 pb-3" name={userInfo.username} description={userInfo.email} />
+                    <User className="justify-start pt-5 pl-3 pb-3" avatarProps={{src: avatarURL}} name={userInfo.username} description={userInfo.email} />
                 </CardHeader>
                 <Divider />
                 <CardBody className="pt-3 gap-y-5">
