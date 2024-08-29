@@ -1,7 +1,8 @@
+import { MailIcon } from "@/components/icons/MailIcon";
 import { doCreateUsersWithEmailAndPassword, doSignInUsersWithEmailAndPassword } from "@/utils/ConfigFunctions";
 import { auth, db } from "@/utils/firebase";
-import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { Button, Card, CardBody, CardFooter, CardHeader, Input } from "@nextui-org/react";
+import { GoogleAuthProvider, sendPasswordResetEmail, signInWithPopup } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -10,7 +11,9 @@ import GoogleButton from "react-google-button";
 export default function AuthenticationUI() {
     const router = useRouter();
     const provider = new GoogleAuthProvider;
+    const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
     const [register, setRegister] = useState(false);
+    const [forgotPassword, setForgotPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     // Login state values
     const [loginInput, setLoginInput] = useState({
@@ -136,7 +139,7 @@ export default function AuthenticationUI() {
             );
         }
     }
-    // Obtains the information generated from above and if all is true, it then performs a final check but for more specific values all at once to see if they are all true
+    // Obtains the information generated from above and if all is true, it then performs a final check but for more specific values all at once to see if they are all true to see if they are all true
     // On the event that it returns true, then it calls the function doCreateUsersWithEmailAndPassword passing through the correct parameters
     // Sending the users information to the Firebase Authentication DB and the Firestore DB, with the following information being stored:
     // - Firebase Authentication
@@ -216,124 +219,175 @@ export default function AuthenticationUI() {
         let uid = userCreds.user.uid;
         router.push(`${uid}/`)
     }
+    const updateChange = (event) => {
+        const { value } = event.target;
+        setForgotPasswordEmail(value);
+    }
+    const sendResetEmail = () => {
+        setLoading(true)
+        sendPasswordResetEmail(auth, forgotPasswordEmail)
+            .then(
+                () => {
+                    alert("password reset sent");
+                }
+            )
+            .catch(
+                (error) => {
+                    alert(error);
+                }
+            )
+    }
     return (
         <div className="bg-desktop-background bg-cover h-screen bg-repeat flex justify-center items-center">
             <div className="sm:px-40 sm:py-20 backdrop-filter backdrop-blur-sm border-2 border-white rounded-3xl">
-                {register ?
+                {forgotPassword ?
                     <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[500px]">
                         <CardHeader>
-                            <h1 className="text-2xl font-bold capitalize tracking-wider max-sm:ml-2">
-                                Register
-                            </h1>
+                            <div className="grid grid-cols-1">
+                                <h1 className="text-2xl font-bold tracking-wider max-sm:ml-2">
+                                    Forgot password?
+                                </h1>
+                                <p className="text-sm text-gray-500 tracking-wider max-sm:ml-2">
+                                    No worries, we'll send an email to update it!
+                                </p>
+                            </div>
                         </CardHeader>
-                        <CardBody className="gap-y-4">
+                        <CardBody>
                             <Input
-                                isInvalid={errorState.username}
-                                errorMessage={errorMessage.username}
-                                onKeyUp={handleUsernameChange}
-                                value={registerInput.username}
-                                onChange={handleChange}
-                                name="username"
-                                isRequired
-                                label="Username"
-                                variant="bordered"
-                                placeholder="Enter your username"
-                                description="Your username must be unique, you can change it later."
-                                isClearable
+                                value={forgotPasswordEmail}
+                                onChange={updateChange}
+                                name="forgotPasswordEmail"
+                                placeholder="John.Doe@email.com"
+                                variant="faded"
+                                color="primary"
+                                endContent={<MailIcon className="text-xl text-gray-500" />}
                             />
-                            <Input
-                                isInvalid={errorState.email}
-                                errorMessage={errorMessage.email}
-                                onKeyUp={handleEmailChange}
-                                value={registerInput.email}
-                                onChange={handleChange}
-                                name="email"
-                                isRequired
-                                label="Email"
-                                variant="bordered"
-                                placeholder="Enter your email"
-                                description="Enter a valid email address. You must verify it later."
-                                isClearable
-                            />
-                            <Input
-                                isInvalid={errorState.password}
-                                errorMessage={errorMessage.password}
-                                onKeyUp={handlePasswordChange}
-                                type="password"
-                                value={registerInput.password}
-                                onChange={handleChange}
-                                name="password"
-                                isRequired
-                                label="Password"
-                                variant="bordered"
-                                placeholder="Enter your password"
-                                description="Remember, we don't share your password with anyone."
-                                isClearable
-                            />
-                            <Button onClick={registerAccountToFireBase} isLoading={loading} color="primary" variant="solid" className="w-4/6 sm:w-5/6 md:w-96 mx-auto">
-                                Register
-                            </Button>
-                            <p className="text-center text-xs text-gray-500">
-                                Already have an account? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => setRegister(false)}>Login here</span>
-                            </p>
                         </CardBody>
+                        <CardFooter>
+                            <Button isLoading={loading} onClick={sendResetEmail} className="w-full" color="primary">
+                                Send Email
+                            </Button>
+                        </CardFooter>
                     </Card>
                     :
-                    <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[400px]">
-                        <CardHeader>
-                            <h1 className="text-2xl font-bold capitalize tracking-wider">
-                                Login
-                            </h1>
-                        </CardHeader>
-                        <CardBody className="gap-y-4">
-                            <Input
-                                isInvalid={errorState.loginUsername}
-                                errorMessage={errorMessage.loginUsername}
-                                value={loginInput.email}
-                                onChange={handleLoginChange}
-                                name="email"
-                                onKeyUp={handleUsernameChange}
-                                isRequired
-                                label="Email"
-                                variant="bordered"
-                                placeholder="Enter your email"
-                                description="Remember, we don't share your email with anyone."
-                                isClearable
-                            />
-                            <Input
-                                isInvalid={errorState.loginPassword}
-                                errorMessage={errorMessage.loginPassword}
-                                onKeyUp={handlePasswordChange}
-                                value={loginInput.password}
-                                onChange={handleLoginChange}
-                                type="password"
-                                name="password"
-                                label="Password"
-                                variant="bordered"
-                                placeholder="Enter your password"
-                                description="Remember, we don't share your password with anyone."
-                                isRequired
-                                isClearable
-                            />
-                            <Button onClick={authenticateLoginInfo} color="primary" variant="solid" className="sm:w-5/6 mx-auto">
-                                Login
-                            </Button>
-                            <div className="relative py-4">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-b border-gray-300"></div>
+                    register ?
+                        <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[500px]">
+                            <CardHeader>
+                                <h1 className="text-2xl font-bold capitalize tracking-wider max-sm:ml-2">
+                                    Register
+                                </h1>
+                            </CardHeader>
+                            <CardBody className="gap-y-4">
+                                <Input
+                                    isInvalid={errorState.username}
+                                    errorMessage={errorMessage.username}
+                                    onKeyUp={handleUsernameChange}
+                                    value={registerInput.username}
+                                    onChange={handleChange}
+                                    name="username"
+                                    isRequired
+                                    label="Username"
+                                    variant="bordered"
+                                    placeholder="Enter your username"
+                                    description="Your username must be unique, you can change it later."
+                                    isClearable
+                                />
+                                <Input
+                                    isInvalid={errorState.email}
+                                    errorMessage={errorMessage.email}
+                                    onKeyUp={handleEmailChange}
+                                    value={registerInput.email}
+                                    onChange={handleChange}
+                                    name="email"
+                                    isRequired
+                                    label="Email"
+                                    variant="bordered"
+                                    placeholder="Enter your email"
+                                    description="Enter a valid email address. You must verify it later."
+                                    isClearable
+                                />
+                                <Input
+                                    isInvalid={errorState.password}
+                                    errorMessage={errorMessage.password}
+                                    onKeyUp={handlePasswordChange}
+                                    type="password"
+                                    value={registerInput.password}
+                                    onChange={handleChange}
+                                    name="password"
+                                    isRequired
+                                    label="Password"
+                                    variant="bordered"
+                                    placeholder="Enter your password"
+                                    description="Remember, we don't share your password with anyone."
+                                    isClearable
+                                />
+                                <Button onClick={registerAccountToFireBase} isLoading={loading} color="primary" variant="solid" className="w-4/6 sm:w-5/6 md:w-96 mx-auto">
+                                    Register
+                                </Button>
+                                <p className="text-center text-xs text-gray-500">
+                                    Already have an account? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => setRegister(false)}>Login here</span>
+                                </p>
+                            </CardBody>
+                        </Card>
+                        :
+                        <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[400px]">
+                            <CardHeader>
+                                <h1 className="text-2xl font-bold capitalize tracking-wider">
+                                    Login
+                                </h1>
+                            </CardHeader>
+                            <CardBody className="gap-y-4">
+                                <Input
+                                    isInvalid={errorState.loginUsername}
+                                    errorMessage={errorMessage.loginUsername}
+                                    value={loginInput.email}
+                                    onChange={handleLoginChange}
+                                    name="email"
+                                    onKeyUp={handleUsernameChange}
+                                    isRequired
+                                    label="Email"
+                                    variant="bordered"
+                                    placeholder="Enter your email"
+                                    description="Remember, we don't share your email with anyone."
+                                    isClearable
+                                />
+                                <Input
+                                    isInvalid={errorState.loginPassword}
+                                    errorMessage={errorMessage.loginPassword}
+                                    onKeyUp={handlePasswordChange}
+                                    value={loginInput.password}
+                                    onChange={handleLoginChange}
+                                    type="password"
+                                    name="password"
+                                    label="Password"
+                                    variant="bordered"
+                                    placeholder="Enter your password"
+                                    description="Remember, we don't share your password with anyone."
+                                    isRequired
+                                    isClearable
+                                />
+                                <Button onClick={authenticateLoginInfo} color="primary" variant="solid" className="sm:w-5/6 mx-auto">
+                                    Login
+                                </Button>
+                                <div className="relative py-4">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-b border-gray-300"></div>
+                                    </div>
+                                    <div className="relative flex justify-center">
+                                        <span className="bg-white px-4 text-sm text-gray-500">OR</span>
+                                    </div>
                                 </div>
-                                <div className="relative flex justify-center">
-                                    <span className="bg-white px-4 text-sm text-gray-500">OR</span>
+                                <div className="flex justify-center items-center mb-5">
+                                    <GoogleButton onClick={signInWithGoogle} />
                                 </div>
-                            </div>
-                            <div className="flex justify-center items-center mb-5">
-                                <GoogleButton onClick={signInWithGoogle} />
-                            </div>
-                            <p className="text-center text-xs text-gray-500">
-                                Don't have an account? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => setRegister(true)}>Register here</span>
-                            </p>
-                        </CardBody>
-                    </Card>
+                                <p className="text-center text-xs text-gray-500">
+                                    Forgot your password? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => setForgotPassword(true)}>Click here</span>
+                                </p>
+                                <p className="text-center text-xs text-gray-500">
+                                    Don't have an account? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => setRegister(true)}>Register here</span>
+                                </p>
+                            </CardBody>
+                        </Card>
                 }
             </div>
         </div>
