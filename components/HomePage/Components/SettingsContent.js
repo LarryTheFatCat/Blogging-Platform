@@ -1,20 +1,29 @@
 import { useState, useEffect } from "react";
-import { auth, db, storage } from "@/utils/firebase";
-import { Avatar, Button, ButtonGroup, Card, CardBody, CardHeader, Divider, Input, Tooltip } from "@nextui-org/react";
-import { onAuthStateChanged } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { updateProfile } from "firebase/auth";
+import { auth, db } from "@/utils/firebase";
+import {
+    Avatar,
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    Divider,
+    Input,
+    Tooltip
+} from "@nextui-org/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { MailIcon } from "@/components/icons/MailIcon";
+import ProfilePictureChildComponent from "./SubComponents/ProfilePictureChildComponent";
 
 export default function SettingsContent() {
-    const [photoURL, setPhotoURL] = useState(null);
+    // State variables
+    const [email, setEmail] = useState("");
     const [errorState, setErrorState] = useState(
         {
             bool: false,
             reason: "First name and last name must be at least 3 characters long"
         }
     )
-    const [imageUpload, setImageUpload] = useState(null);
     const [nameInfo, setNameInfo] = useState(
         {
             firstName: "",
@@ -30,81 +39,7 @@ export default function SettingsContent() {
     const [lastUpdateTime, setLastUpdateTime] = useState(0);
     const UPDATE_COOLDOWN = 60000; // 1 minute cooldown
 
-    const fileUploadDialog = async () => {
-        try {
-            const [fileHandle] = await window.showOpenFilePicker(
-                {
-                    types: [
-                        {
-                            description: 'Images',
-                            accept: {
-                                'image/*': ['.png'],
-                            }
-                        },
-                    ],
-                    multiple: false
-                }
-            );
-            const file = await fileHandle.getFile();
-            handleFile(file);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const handleFile = (file) => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const uid = user.uid;
-                const newFileName = `${uid}`;
-                const renamedFile = new File([file], newFileName, { type: file.type });
-                setImageUpload(renamedFile);
-                uploadImage(renamedFile);
-            }
-        })
-        return () => unsubscribe();
-    }
-
-    const uploadImage = (file) => {
-        if (file === null) return;
-        const user = auth.currentUser;
-        if (!user) {
-            console.error("No user logged in");
-            return;
-        }
-
-        const imageRef = ref(storage, `${file.name}`);
-        uploadBytes(imageRef, file)
-            .then(() => getDownloadURL(imageRef))
-            .then((url) => {
-                return updateProfile(user, { photoURL: url });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setPhotoURL(user.photoURL);
-            }
-        });
-        return () => unsubscribe();
-    }, []);
-
-    const deleteProfilePicture = () => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            const deleteImageRef = ref(storage, `${user.uid}`);
-            deleteObject(deleteImageRef).then(() => {
-                alert("file deleted successfully");
-                setPhotoURL("");
-            }).catch((error) => {
-                alert(error);
-            })
-        })
-        return () => unsubscribe();
-    }
-
+    // Name management
     useEffect(() => {
         const fetchUserName = async () => {
             const user = auth.currentUser;
@@ -194,6 +129,7 @@ export default function SettingsContent() {
             reason: isValid ? "" : "First name and last name must be at least 3 characters long"
         });
     }
+
     return (
         <div>
             <Card className="h-full w-[118%] p-10 right-28">
@@ -213,79 +149,66 @@ export default function SettingsContent() {
                 <Divider />
                 <CardBody>
                     <div className="pl-3">
-                        <div className="flex">
-                            <Avatar src={photoURL} className="w-24 h-24" />
-                            <div className="grid grid-cols-1 pl-2 pt-2">
-                                <p className="pt-3 font-bold ">
-                                    Profile Picture
-                                </p>
-                                <p className="pb-10 font-thin text-gray-700">
-                                    PNG, under 15MB
-                                </p>
-                            </div>
-                            <Button
+                        <ProfilePictureChildComponent />
+                        <div className="grid grid-cols-3 gap-5 mt-5">
+                            <Input
+                                isInvalid={errorState.bool}
+                                errorMessage={errorState.reason}
+                                label="First Name"
+                                labelPlacement="outside"
+                                placeholder={nameInfo.firstName}
                                 variant="faded"
-                                color="primary"
-                                size="md"
-                                onClick={fileUploadDialog}
-                                className="left-56 mt-5"
-                            >
-                                Upload new picture
-                            </Button>
-                            <Button
+                                radius="sm"
+                                onKeyUp={updateButtonState}
+                                value={updateNameInfo.updatedFirstName}
+                                onChange={updateNameState}
+                                name="updatedFirstName"
+                            />
+                            <Input
+                                isInvalid={errorState.bool}
+                                errorMessage={errorState.reason}
+                                label="Last Name"
+                                labelPlacement="outside"
+                                placeholder={nameInfo.lastName}
                                 variant="faded"
-                                size="md"
-                                onClick={deleteProfilePicture}
-                                className="left-60 mt-5 border-red-500 text-red-500 hover:border-red-950 hover:text-red-950"
-                            >
-                                Delete
-                            </Button>
+                                radius="sm"
+                                onKeyUp={updateButtonState}
+                                value={updateNameInfo.updatedLastName}
+                                onChange={updateNameState}
+                                name="updatedLastName"
+                            />
+                            <Tooltip showArrow={true} content="Remember, we don't share your info with anyone 😊" color="warning" className="text-gray-500">
+                                <Button
+                                    onClick={nameInfoUpdate}
+                                    className="mt-6"
+                                    variant="faded"
+                                    color="primary"
+                                    radius="sm"
+                                    isDisabled={errorState.bool}
+                                >
+                                    Update Name
+                                </Button>
+                            </Tooltip>
                         </div>
-                        <div className="pl-3">
-                            <h3 className="text-lg">
-                                Full Name
+                        <Divider className="mt-5" />
+                        <div>
+                            <h3 className="text-lg mt-5">
+                                Contact Email
                             </h3>
-                            <div className="grid grid-cols-3 gap-5 mt-5">
+                            <p className="text-xs text-gray-500">
+                                Manage your accounts email addresses for security and convience!
+                            </p>
+                            <div className="grid grid-cols-2 mt-5">
                                 <Input
                                     isInvalid={errorState.bool}
-                                    errorMessage={errorState.reason}
-                                    label="First Name"
+                                    errorMessage="Please enter a valid email!"
+                                    type="email"
+                                    label="Email"
+                                    placeholder={email}
                                     labelPlacement="outside"
-                                    placeholder={nameInfo.firstName}
-                                    variant="faded"
-                                    radius="sm"
-                                    onKeyUp={updateButtonState}
-                                    value={updateNameInfo.updatedFirstName}
-                                    onChange={updateNameState}
-                                    name="updatedFirstName"
+                                    endContent={<MailIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0" />}
                                 />
-                                <Input
-                                    isInvalid={errorState.bool}
-                                    errorMessage={errorState.reason}
-                                    label="Last Name"
-                                    labelPlacement="outside"
-                                    placeholder={nameInfo.lastName}
-                                    variant="faded"
-                                    radius="sm"
-                                    onKeyUp={updateButtonState}
-                                    value={updateNameInfo.updatedLastName}
-                                    onChange={updateNameState}
-                                    name="updatedLastName"
-                                />
-                                <Tooltip showArrow={true} content="Remember, we don't share your info with anyone 😊" color="warning" className="text-gray-500">
-                                    <Button
-                                        onClick={nameInfoUpdate}
-                                        className="mt-6"
-                                        variant="faded"
-                                        color="primary"
-                                        radius="sm"
-                                        isDisabled={errorState.bool}
-                                    >
-                                        Update Name
-                                    </Button>
-                                </Tooltip>
                             </div>
-                            <Divider className="mt-5" />
                         </div>
                     </div>
                 </CardBody>
