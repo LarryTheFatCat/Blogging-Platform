@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 
 export default function ProfilePictureChildComponent() {
+    const [loading, setLoading] = useState(false);
     const [photoURL, setPhotoURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
 
@@ -52,13 +53,13 @@ export default function ProfilePictureChildComponent() {
     }
 
     const uploadImage = (file) => {
+        setLoading(true);
         if (file === null) return;
         const user = auth.currentUser;
         if (!user) {
             console.error("No user logged in");
             return;
         }
-
         const imageRef = ref(storage, `${file.name}`);
         uploadBytes(imageRef, file)
             .then(() => getDownloadURL(imageRef))
@@ -67,6 +68,8 @@ export default function ProfilePictureChildComponent() {
             })
             .then(() => {
                 setPhotoURL(user.photoURL);
+            }).then(() => {
+                setLoading(false);
             })
             .catch((error) => {
                 console.error(error);
@@ -104,6 +107,7 @@ export default function ProfilePictureChildComponent() {
                 size="md"
                 onClick={fileUploadDialog}
                 className="left-56 mt-5"
+                isLoading={loading}
             >
                 Upload new picture
             </Button>
