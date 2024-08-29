@@ -280,9 +280,14 @@ export default function AuthenticationUI() {
                             />
                         </CardBody>
                         <CardFooter>
-                            <Button isLoading={loading} onClick={sendResetEmail} className="w-full" color="primary">
-                                Send Email
-                            </Button>
+                            <div className="grid grid-cols-1 mx-auto w-full">
+                                <Button isLoading={loading} onClick={sendResetEmail} className="w-full" color="primary">
+                                    Send Email
+                                </Button>
+                                <p className="text-center text-xs mt-2 text-gray-500">
+                                    Remember your password? <span className="text-blue-500 hover:underline cursor-pointer" onClick={() => window.location.reload()}>Login here</span>
+                                </p>
+                            </div>
                         </CardFooter>
                     </Card>
                     :
