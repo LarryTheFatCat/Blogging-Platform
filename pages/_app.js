@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { ThemeProvider } from 'next-themes';
 import Loading from "./Loading";
 
 function MyApp({ Component, pageProps }) {
@@ -22,7 +23,13 @@ function MyApp({ Component, pageProps }) {
     };
   }, [router]);
 
-  return loading ? <Loading /> : <Component {...pageProps} />;
+  return (
+    <ThemeProvider attribute="class">
+      <div className="relative">
+        {loading ? <Loading /> : <Component {...pageProps} />}
+      </div>
+    </ThemeProvider>
+  );
 }
 
 export default MyApp;

@@ -9,6 +9,7 @@ import FirstAndLastNameChildComponent from "./ChildComponents/FirstAndLastNameCh
 import UpdateEmailChildComponent from "./ChildComponents/UpdateEmailChildComponent";
 import UpdatePasswordChildComponent from "./ChildComponents/UpdatePasswordChildComponent";
 import DeleteLogoutChildComponent from "./ChildComponents/DeleteLogoutChildComponent";
+import ThemeSwitcher from "./ChildComponents/ThemeSwitcher";
 
 export default function SettingsContent() {
 
@@ -37,6 +38,8 @@ export default function SettingsContent() {
                         <UpdateEmailChildComponent />
                         <Divider className="mt-5" />
                         <UpdatePasswordChildComponent />
+                        <Divider className="mt-5" />
+                        <ThemeSwitcher />
                         <Divider className="mt-5" />
                         <DeleteLogoutChildComponent />
                     </div>
