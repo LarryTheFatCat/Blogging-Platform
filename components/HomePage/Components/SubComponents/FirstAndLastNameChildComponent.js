@@ -22,7 +22,7 @@ export default function FirstAndLastNameChildComponent() {
         updatedLastName: "",
     });
     const [lastUpdateTime, setLastUpdateTime] = useState(0);
-    const UPDATE_COOLDOWN = 60000; // 1 minute cooldown
+    const UPDATE_COOLDOWN = 60000; // if user updates, return with a 1 minute cooldown
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -44,10 +44,6 @@ export default function FirstAndLastNameChildComponent() {
 
         fetchUserName();
     }, []);
-
-    const updateButtonState = () => {
-        // Implementation if needed
-    }
 
     const nameInfoUpdate = async () => {
         const now = Date.now();
@@ -125,7 +121,6 @@ export default function FirstAndLastNameChildComponent() {
                 placeholder={nameInfo.firstName}
                 variant="faded"
                 radius="sm"
-                onKeyUp={updateButtonState}
                 value={updateNameInfo.updatedFirstName}
                 onChange={updateNameState}
                 name="updatedFirstName"
@@ -138,7 +133,6 @@ export default function FirstAndLastNameChildComponent() {
                 placeholder={nameInfo.lastName}
                 variant="faded"
                 radius="sm"
-                onKeyUp={updateButtonState}
                 value={updateNameInfo.updatedLastName}
                 onChange={updateNameState}
                 name="updatedLastName"
