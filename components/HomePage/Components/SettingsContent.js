@@ -7,6 +7,7 @@ import {
 import ProfilePictureChildComponent from "./ChildComponents/ProfilePictureChildComponent";
 import FirstAndLastNameChildComponent from "./ChildComponents/FirstAndLastNameChildComponent";
 import UpdateEmailChildComponent from "./ChildComponents/UpdateEmailChildComponent";
+import UpdatePasswordChildComponent from "./ChildComponents/UpdatePasswordChildComponent";
 
 export default function SettingsContent() {
 
@@ -33,6 +34,8 @@ export default function SettingsContent() {
                         <FirstAndLastNameChildComponent />
                         <Divider className="mt-5" />
                         <UpdateEmailChildComponent />
+                        <Divider className="mt-5" />
+                        <UpdatePasswordChildComponent />
                     </div>
                 </CardBody>
             </Card>

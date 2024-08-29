@@ -141,7 +141,7 @@ export default function FirstAndLastNameChildComponent() {
                 <Button
                     onClick={nameInfoUpdate}
                     className="mt-6"
-                    variant="faded"
+                    variant="bordered"
                     color="primary"
                     radius="sm"
                     isDisabled={errorState.bool}

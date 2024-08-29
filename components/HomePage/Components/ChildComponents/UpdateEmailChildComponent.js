@@ -72,6 +72,9 @@ export default function UpdateEmailChildComponent() {
     return (
         <div>
             <h1 className="text-lg mt-5">Update Email</h1>
+            <p className="text-xs text-gray-500">
+                Update / Manage your emails for security and convience! (Though max 1 new email...)
+            </p>
             <div className="grid grid-cols-3 mt-5 gap-5">
                 <Input
                     type="email"
@@ -117,7 +120,7 @@ export default function UpdateEmailChildComponent() {
                 <Button
                     color="primary"
                     className="mt-6"
-                    variant="solid"
+                    variant="bordered"
                     onPress={saveEmails}
                     isLoading={loading}
                 >
