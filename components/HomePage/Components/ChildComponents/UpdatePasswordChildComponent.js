@@ -63,7 +63,6 @@ export default function UpdatePasswordChildComponent() {
             await reauthenticateWithCredential(user, credential);
             await updatePassword(user, input.newPassword);
             setLoading(false);
-            // Optionally, add success message here
         } catch (error) {
             setLoading(false);
             if (error.code === 'auth/wrong-password') {
