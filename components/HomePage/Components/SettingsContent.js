@@ -4,9 +4,9 @@ import {
     CardHeader,
     Divider,
 } from "@nextui-org/react";
-import ProfilePictureChildComponent from "./SubComponents/ProfilePictureChildComponent";
-import FirstAndLastNameChildComponent from "./SubComponents/FirstAndLastNameChildComponent";
-import UpdateEmailChildComponent from "./SubComponents/UpdateEmailChildComponent";
+import ProfilePictureChildComponent from "./ChildComponents/ProfilePictureChildComponent";
+import FirstAndLastNameChildComponent from "./ChildComponents/FirstAndLastNameChildComponent";
+import UpdateEmailChildComponent from "./ChildComponents/UpdateEmailChildComponent";
 
 export default function SettingsContent() {
 
