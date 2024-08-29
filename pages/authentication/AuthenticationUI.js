@@ -12,6 +12,7 @@ export default function AuthenticationUI() {
     const router = useRouter();
     const provider = new GoogleAuthProvider;
     const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+    const [forgotPasswordEmailError, setForgotPasswordEmailError] = useState("");
     const [register, setRegister] = useState(false);
     const [forgotPassword, setForgotPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -222,20 +223,33 @@ export default function AuthenticationUI() {
     const updateChange = (event) => {
         const { value } = event.target;
         setForgotPasswordEmail(value);
+        validateForgotPasswordEmail(value);
     }
+
+    const validateForgotPasswordEmail = (email) => {
+        if (!email) {
+            setForgotPasswordEmailError("Email is required");
+        } else if (!emailRegex.test(email)) {
+            setForgotPasswordEmailError("Invalid email format");
+        } else {
+            setForgotPasswordEmailError("");
+        }
+    }
+
     const sendResetEmail = () => {
-        setLoading(true)
+        if (!forgotPasswordEmail || !emailRegex.test(forgotPasswordEmail)) {
+            validateForgotPasswordEmail(forgotPasswordEmail);
+            return;
+        }
+        setLoading(true);
         sendPasswordResetEmail(auth, forgotPasswordEmail)
-            .then(
-                () => {
-                    alert("password reset sent");
-                }
-            )
-            .catch(
-                (error) => {
-                    alert(error);
-                }
-            )
+            .then(() => {
+                setLoading(false);
+            })
+            .catch((error) => {
+                alert(error.message);
+                setLoading(false);
+            });
     }
     return (
         <div className="bg-desktop-background bg-cover h-screen bg-repeat flex justify-center items-center">
@@ -261,6 +275,8 @@ export default function AuthenticationUI() {
                                 variant="faded"
                                 color="primary"
                                 endContent={<MailIcon className="text-xl text-gray-500" />}
+                                isInvalid={!!forgotPasswordEmailError}
+                                errorMessage={forgotPasswordEmailError}
                             />
                         </CardBody>
                         <CardFooter>
