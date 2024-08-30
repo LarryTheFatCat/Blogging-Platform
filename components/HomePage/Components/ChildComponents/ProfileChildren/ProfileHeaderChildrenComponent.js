@@ -1,5 +1,5 @@
 import { auth, db } from "@/utils/firebase";
-import { Avatar, CardHeader, Input, Button, Select, SelectItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Avatar, CardHeader, Input, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -16,7 +16,10 @@ export default function ProfileHeaderChildrenComponent() {
         editedBio: "",
         location: "",
         gender: "",
-        pronouns: ""
+        pronouns: "",
+        numberOfPosts: 0,
+        numberOfFollowers: 0,
+        numberOfFollowing: 0
     });
 
     const [editStates, setEditStates] = useState({
@@ -37,32 +40,33 @@ export default function ProfileHeaderChildrenComponent() {
         setEditStates(prev => ({ ...prev, [field]: value }));
     };
 
-    useEffect(
-        () => {
-            const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    updateUserInfo("photoURL", user.photoURL);
-                    updateUserInfo("displayName", user.displayName);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                updateUserInfo("photoURL", user.photoURL);
+                updateUserInfo("displayName", user.displayName);
 
-                    const userDocRef = doc(db, "users", user.uid);
-                    const userDocSnap = await getDoc(userDocRef);
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
 
-                    if (userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        updateUserInfo("bio", userData.bio || "Click to add a bio.");
-                        updateUserInfo("location", userData.location || "Click to add a location");
-                        updateUserInfo("gender", userData.gender || "Click to add gender");
-                        updateUserInfo("pronouns", userData.pronouns || "Click to add pronouns");
-                    } else {
-                        updateUserInfo("bio", "Click to add a bio.");
-                        updateUserInfo("gender", "Click to add gender");
-                        updateUserInfo("pronouns", "Click to add pronouns");
-                    }
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    updateUserInfo("bio", userData.bio || "Click to add a bio.");
+                    updateUserInfo("location", userData.location || "Click to add a location");
+                    updateUserInfo("gender", userData.gender || "Click to add gender");
+                    updateUserInfo("pronouns", userData.pronouns || "Click to add pronouns");
+                    updateUserInfo("numberOfPosts", userData.numberOfPosts || 0);
+                    updateUserInfo("numberOfFollowers", userData.numberOfFollowers || 0);
+                    updateUserInfo("numberOfFollowing", userData.numberOfFollowing || 0);
+                } else {
+                    updateUserInfo("bio", "Click to add a bio.");
+                    updateUserInfo("gender", "Click to add gender");
+                    updateUserInfo("pronouns", "Click to add pronouns");
                 }
-            });
-            return () => unsubscribe();
-        }, []
-    )
+            }
+        });
+        return () => unsubscribe();
+    }, []);
 
     const handleEditClick = () => {
         updateEditState("isEditing", true);
@@ -129,6 +133,18 @@ export default function ProfileHeaderChildrenComponent() {
             <h1 className="text-center pt-5 text-4xl">
                 {userInfo.displayName}
             </h1>
+            <div className="flex justify-center gap-x-10">
+                <h3 className="text-xl text-center font-thin text-gray-500">
+                    Posts: {userInfo.numberOfPosts}
+                </h3>
+                <h3 className="text-xl text-center font-thin text-gray-500">
+                    Followers: {userInfo.numberOfFollowers}
+                </h3>
+                <h3 className="text-xl text-center font-thin text-gray-500">
+                    Following: {userInfo.numberOfFollowing}
+                </h3>
+            </div>
+            <Divider className="my-3" />
             {editStates.isEditing ? (
                 <div className="flex flex-col items-center gap-2">
                     <Input
@@ -186,8 +202,8 @@ export default function ProfileHeaderChildrenComponent() {
                                             {userInfo.gender || "Select gender"}
                                         </Button>
                                     </DropdownTrigger>
-                                    <DropdownMenu 
-                                        aria-label="Gender selection" 
+                                    <DropdownMenu
+                                        aria-label="Gender selection"
                                         onAction={handleGenderSelect}
                                         selectedKeys={new Set([userInfo.gender])}
                                         selectionMode="single"

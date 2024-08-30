@@ -169,7 +169,9 @@ export default function AuthenticationUI() {
                     location: "",
                     pronouns: "",
                     gender: "",
-
+                    numberOfPost: 0,
+                    numberOfFollowers: 0,
+                    numbersOfFollowing: 0
                 }).then(() => {
                     setLoading(false);
                     setRegister(false);
@@ -218,6 +220,9 @@ export default function AuthenticationUI() {
                 location: "",
                 pronouns: "",
                 gender: "",
+                numberOfPost: 0,
+                numberOfFollowers: 0,
+                numbersOfFollowing: 0
             });
             router.push(`${uid}/`);
         } catch (error) {
