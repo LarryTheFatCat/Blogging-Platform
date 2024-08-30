@@ -22,14 +22,13 @@ export default function DeleteLogoutChildComponent() {
         const deleteReference = ref(storage, `${uid}`);
         setLoading(true);
         try {
+            router.push("/");
             await deleteDoc(doc(db, "users", uid));
             await deleteUser(user);
             await deleteObject(deleteReference);
             setLoading(false);
-            router.push("/");
-        } catch (e) {
+        } catch {
             setLoading(false);
-            alert(e.message);
         }
     }
 
@@ -77,8 +76,8 @@ export default function DeleteLogoutChildComponent() {
                     isLoading={loading}
                     onClick={
                         () => {
-                            doSignOut()
                             router.push("/")
+                            doSignOut()
                         }
                     }
                     variant="bordered"

@@ -164,7 +164,12 @@ export default function AuthenticationUI() {
                     email: registerInput.email,
                     password: registerInput.password,
                     username: registerInput.username,
-                    uid: uid
+                    uid: uid,
+                    bio: "",
+                    location: "",
+                    pronouns: "",
+                    gender: "",
+
                 }).then(() => {
                     setLoading(false);
                     setRegister(false);
@@ -208,7 +213,11 @@ export default function AuthenticationUI() {
             await setDoc(doc(db, "users", uid), {
                 email: user.email,
                 username: user.displayName,
-                uid: uid
+                uid: uid,
+                bio: "",
+                location: "",
+                pronouns: "",
+                gender: "",
             });
             router.push(`${uid}/`);
         } catch (error) {

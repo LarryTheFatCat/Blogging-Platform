@@ -4,12 +4,12 @@ import {
     CardHeader,
     Divider,
 } from "@nextui-org/react";
-import ProfilePictureChildComponent from "./ChildComponents/ProfilePictureChildComponent";
-import FirstAndLastNameChildComponent from "./ChildComponents/FirstAndLastNameChildComponent";
-import UpdateEmailChildComponent from "./ChildComponents/UpdateEmailChildComponent";
-import UpdatePasswordChildComponent from "./ChildComponents/UpdatePasswordChildComponent";
-import DeleteLogoutChildComponent from "./ChildComponents/DeleteLogoutChildComponent";
-import ThemeSwitcher from "./ChildComponents/ThemeSwitcher";
+import ProfilePictureChildComponent from "./ChildComponents/SettingsChildren/ProfilePictureChildComponent";
+import FirstAndLastNameChildComponent from "./ChildComponents/SettingsChildren/FirstAndLastNameChildComponent";
+import UpdateEmailChildComponent from "./ChildComponents/SettingsChildren/UpdateEmailChildComponent";
+import UpdatePasswordChildComponent from "./ChildComponents/SettingsChildren/UpdatePasswordChildComponent";
+import DeleteLogoutChildComponent from "./ChildComponents/SettingsChildren/DeleteLogoutChildComponent";
+import ThemeSwitcher from "./ChildComponents/SettingsChildren/ThemeSwitcher";
 
 export default function SettingsContent() {
 
