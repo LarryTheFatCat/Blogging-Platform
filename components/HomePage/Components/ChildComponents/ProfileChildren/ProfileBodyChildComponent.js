@@ -94,7 +94,6 @@ export default function ProfileBodyChildComponent() {
 
     const createPost = () => {
         setHasPost(true);
-        onClose();
     }
 
     return (
