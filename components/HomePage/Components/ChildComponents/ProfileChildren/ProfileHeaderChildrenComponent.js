@@ -9,25 +9,29 @@ import GenderIcon from "@/components/icons/GenderIcon";
 import PronounsIcon from "@/components/icons/PronounsIcon";
 
 export default function ProfileHeaderChildrenComponent() {
-    const [userInfo, setUserInfo] = useState({
-        photoURL: null,
-        displayName: null,
-        bio: "",
-        editedBio: "",
-        location: "",
-        gender: "",
-        pronouns: "",
-        numberOfPosts: 0,
-        numberOfFollowers: 0,
-        numberOfFollowing: 0
-    });
+    const [userInfo, setUserInfo] = useState(
+        {
+            photoURL: null,
+            displayName: null,
+            bio: "",
+            editedBio: "",
+            location: "",
+            gender: "",
+            pronouns: "",
+            numberOfPosts: 0,
+            numberOfFollowers: 0,
+            numberOfFollowing: 0
+        }
+    );
 
-    const [editStates, setEditStates] = useState({
-        isEditing: false,
-        addLocation: false,
-        editingGender: false,
-        editingPronouns: false
-    });
+    const [editStates, setEditStates] = useState(
+        {
+            isEditing: false,
+            addLocation: false,
+            editingGender: false,
+            editingPronouns: false
+        }
+    );
 
     const [loading, setLoading] = useState(false);
 

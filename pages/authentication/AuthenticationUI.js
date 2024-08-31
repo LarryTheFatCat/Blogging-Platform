@@ -17,32 +17,40 @@ export default function AuthenticationUI() {
     const [forgotPassword, setForgotPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     // Login state values
-    const [loginInput, setLoginInput] = useState({
-        email: "",
-        password: ""
-    });
+    const [loginInput, setLoginInput] = useState(
+        {
+            email: "",
+            password: ""
+        }
+    );
     // Register state values
-    const [registerInput, setRegisterInput] = useState({
-        username: "",
-        email: "",
-        password: ""
-    });
+    const [registerInput, setRegisterInput] = useState(
+        {
+            username: "",
+            email: "",
+            password: ""
+        }
+    );
     // errorState for isValid
-    const [errorState, setErrorState] = useState({
-        username: false,
-        password: false,
-        email: false,
-        loginUsername: false,
-        loginPassword: false,
-    });
+    const [errorState, setErrorState] = useState(
+        {
+            username: false,
+            password: false,
+            email: false,
+            loginUsername: false,
+            loginPassword: false,
+        }
+    );
     // errorMessage for when errorState === true
-    const [errorMessage, setErrorMessage] = useState({
-        username: "",
-        email: "",
-        password: "",
-        loginUsername: "",
-        loginPassword: "",
-    });
+    const [errorMessage, setErrorMessage] = useState(
+        {
+            username: "",
+            email: "",
+            password: "",
+            loginUsername: "",
+            loginPassword: "",
+        }
+    );
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Updates register state values
