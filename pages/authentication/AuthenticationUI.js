@@ -9,29 +9,25 @@ import { useState } from "react";
 import GoogleButton from "react-google-button";
 
 const createOrUpdateUserDocument = async (user) => {
-  if (!user) return;
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) {
-    // Create new user document if it doesn't exist
-    await setDoc(userRef, {
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      posts: {},
-      numberOfPost: 0,
-      // Add any other default fields you want for new users
-    });
-  } else {
-    // Optionally update existing user document
-    await setDoc(userRef, {
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-    }, { merge: true });
-  }
+    if (!userSnap.exists()) {
+        await setDoc(userRef, {
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            posts: {},
+            numberOfPost: 0,
+        });
+    } else {
+        await setDoc(userRef, {
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+        }, { merge: true });
+    }
 };
 
 export default function AuthenticationUI() {
