@@ -14,7 +14,6 @@ export default function Sidebar({ onItemSelect }) {
         { name: "Home", icon: FaHome },
         { name: "Profile", icon: FaUser },
         { name: "Explore", icon: FaCompass },
-        { name: "Categories", icon: FaList },
         { name: "Favourites / Bookmarked", icon: FaBookmark },
         { name: "Settings", icon: FaCog }
     ];
@@ -45,7 +44,7 @@ export default function Sidebar({ onItemSelect }) {
     }, []);
     return (
         <div className="flex items-center h-screen">
-            <Card className="w-[500px] p-10 align-middle">
+            <Card className="w-[500px] p-10 align-middle fixed">
                 <CardHeader className="grid grid-cols-1">
                     <div >
                         <h1 className="text-xl text-gray-400 font-thin">

@@ -3,10 +3,36 @@ import { doCreateUsersWithEmailAndPassword, doSignInUsersWithEmailAndPassword } 
 import { auth, db } from "@/utils/firebase";
 import { Button, Card, CardBody, CardFooter, CardHeader, Input } from "@nextui-org/react";
 import { GoogleAuthProvider, sendPasswordResetEmail, signInWithPopup } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import GoogleButton from "react-google-button";
+
+const createOrUpdateUserDocument = async (user) => {
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    // Create new user document if it doesn't exist
+    await setDoc(userRef, {
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      posts: {},
+      numberOfPost: 0,
+      // Add any other default fields you want for new users
+    });
+  } else {
+    // Optionally update existing user document
+    await setDoc(userRef, {
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    }, { merge: true });
+  }
+};
 
 export default function AuthenticationUI() {
     const router = useRouter();
@@ -220,18 +246,7 @@ export default function AuthenticationUI() {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             const uid = user.uid;
-            await setDoc(doc(db, "users", uid), {
-                email: user.email,
-                username: user.displayName,
-                uid: uid,
-                bio: "",
-                location: "",
-                pronouns: "",
-                gender: "",
-                numberOfPosts: 0,
-                numberOfFollowers: 0,
-                numbersOfFollowing: 0
-            });
+            await createOrUpdateUserDocument(user);
             router.push(`${uid}/`);
         } catch (error) {
             console.error("Error signing in with Google:", error);

@@ -1,4 +1,3 @@
-import CategoriesContent from "@/components/HomePage/Components/CategoriesContent";
 import ExploreContent from "@/components/HomePage/Components/ExploreContent";
 import FavouritesBookmarksContent from "@/components/HomePage/Components/FavouritesBookmarksContent";
 import HomeContent from "@/components/HomePage/Components/HomeContent";
@@ -16,8 +15,6 @@ export default function BlogHome() {
                 return <ProfileContent />
             case "Explore":
                 return <ExploreContent />
-            case "Categories":
-                return <CategoriesContent />
             case "Favourites / Bookmarks":
                 return <FavouritesBookmarksContent />
             case "Settings":

@@ -259,12 +259,10 @@ export default function ProfileBodyChildComponent() {
                                 <Card key={post.id} className="p-5">
                                     <CardHeader>
                                         <div>
-                                            <User
-                                            className="pb-5"
-                                                avatarProps={{ src: user.photoURL }}
-                                                name={user.displayName}
-                                                description={user.email}
-                                            />
+                                            <User 
+                                            avatarProps={{src: user.photoURL}} 
+                                            name={user.displayName} 
+                                            description={user.email} />
                                             <h1 className="text-2xl font-semibold">
                                                 {post.title}
                                             </h1>
