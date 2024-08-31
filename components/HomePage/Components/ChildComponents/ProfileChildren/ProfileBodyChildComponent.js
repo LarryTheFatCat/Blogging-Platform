@@ -12,15 +12,20 @@ import {
     Tab,
     Tabs,
     Textarea,
-    useDisclosure
+    useDisclosure,
+    Card,
+    CardHeader,
+    CardBody,
+    User
 } from "@nextui-org/react";
 import { useState, useEffect, useRef } from "react";
-import { doc, increment, runTransaction } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { doc, getDoc, increment, runTransaction } from "firebase/firestore";
 import { auth, db } from "@/utils/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [input, setInput] = useState("");
     const [titleValue, setTitleValue] = useState("");
@@ -43,6 +48,7 @@ export default function ProfileBodyChildComponent() {
     const [fileError, setFileError] = useState("");
     const fileInputRef = useRef(null);
     const [hasPost, setHasPost] = useState(false);
+    const [posts, setPosts] = useState([]);
 
     const handleInput = (e) => {
         const newInput = e.target.value;
@@ -95,6 +101,35 @@ export default function ProfileBodyChildComponent() {
         updateProgressState(input.length);
         updateTitleProgressState(titleValue.length);
     }, [input, titleValue]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) return;
+            if (user) {
+                setUser(user);
+            }
+        })
+        const fetchPosts = async () => {
+            if (!auth.currentUser) return;
+            const userRef = doc(db, "users", auth.currentUser.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const userPosts = userData.posts || {};
+                const postsArray = Object.entries(userPosts).map(([id, post]) => ({
+                    id,
+                    ...post
+                }));
+                setPosts(postsArray);
+                setHasPost(postsArray.length > 0);
+            }
+        };
+        return () => {
+            unsubscribe();
+            fetchPosts();
+        }
+    }, []);
 
     const createPost = async () => {
         if (!auth.currentUser) return;
@@ -218,7 +253,30 @@ export default function ProfileBodyChildComponent() {
                             }
                         </ModalContent>
                     </Modal>
-                    {!hasPost && (
+                    {hasPost ? (
+                        <div className="mt-5 space-y-4">
+                            {posts.map((post) => (
+                                <Card key={post.id} className="p-5">
+                                    <CardHeader>
+                                        <div>
+                                            <User
+                                            className="pb-5"
+                                                avatarProps={{ src: user.photoURL }}
+                                                name={user.displayName}
+                                                description={user.email}
+                                            />
+                                            <h1 className="text-2xl font-semibold">
+                                                {post.title}
+                                            </h1>
+                                        </div>
+                                    </CardHeader>
+                                    <CardBody>
+                                        {post.description}
+                                    </CardBody>
+                                </Card>
+                            ))}
+                        </div>
+                    ) : (
                         <h1 className="text-4xl text-center font-bold w-[50%] mx-auto pt-10">
                             Seems pretty empty here... Make a post to get started!
                         </h1>
