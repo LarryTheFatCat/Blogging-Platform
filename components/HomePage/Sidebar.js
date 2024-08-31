@@ -13,8 +13,6 @@ export default function Sidebar({ onItemSelect }) {
     const sideBarItems = [
         { name: "Home", icon: FaHome },
         { name: "Profile", icon: FaUser },
-        { name: "Explore", icon: FaCompass },
-        { name: "Favourites / Bookmarked", icon: FaBookmark },
         { name: "Settings", icon: FaCog }
     ];
     useEffect(() => {
