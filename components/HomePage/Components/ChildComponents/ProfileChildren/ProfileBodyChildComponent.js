@@ -15,9 +15,9 @@ import {
     useDisclosure
 } from "@nextui-org/react";
 import { useState, useEffect, useRef } from "react";
-import { getFirestore, doc, updateDoc, arrayUnion, increment, runTransaction } from "firebase/firestore";
+import { doc, increment, runTransaction } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { db } from "@/utils/firebase";
+import { auth, db } from "@/utils/firebase";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -43,7 +43,6 @@ export default function ProfileBodyChildComponent() {
     const [fileError, setFileError] = useState("");
     const fileInputRef = useRef(null);
     const [hasPost, setHasPost] = useState(false);
-    const auth = getAuth();
 
     const handleInput = (e) => {
         const newInput = e.target.value;
@@ -125,12 +124,12 @@ export default function ProfileBodyChildComponent() {
                     numberOfPost: increment(1)
                 });
             });
-
             setHasPost(true);
             setTitleValue("");
             setInput("");
         } finally {
             setIsLoading(false);
+            window.location.reload();
         }
     };
 
@@ -143,7 +142,7 @@ export default function ProfileBodyChildComponent() {
                         Posts
                     </div>
                 }>
-                    <Button onPress={onOpen} isIconOnly radius="full">
+                    <Button color="primary" onPress={onOpen} isIconOnly radius="full">
                         +
                     </Button>
                     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

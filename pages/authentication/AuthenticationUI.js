@@ -274,7 +274,7 @@ export default function AuthenticationUI() {
             });
     }
     return (
-        <div className="bg-desktop-background bg-cover h-screen bg-repeat flex justify-center items-center">
+        <div className="bg-desktop-background bg-cover h-screen bg-repeat flex justify-center items-center light">
             <div className="sm:px-40 sm:py-20 backdrop-filter backdrop-blur-sm border-2 border-white rounded-3xl">
                 {forgotPassword ?
                     <Card className="backdrop-filter backdrop-blur-sm bg-opacity-40 sm:p-4 md:w-[500px]">
