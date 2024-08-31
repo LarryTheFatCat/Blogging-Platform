@@ -18,7 +18,7 @@ export default function ProfileHeaderChildrenComponent() {
             location: "",
             gender: "",
             pronouns: "",
-            numberOfPosts: 0,
+            numberOfPost: 0,
             numberOfFollowers: 0,
             numberOfFollowing: 0
         }
@@ -44,29 +44,35 @@ export default function ProfileHeaderChildrenComponent() {
         setEditStates(prev => ({ ...prev, [field]: value }));
     };
 
+    const fetchUserData = async (uid) => {
+        const userDocRef = doc(db, "users", uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            updateUserInfo("bio", userData.bio || "Click to add a bio.");
+            updateUserInfo("location", userData.location || "Click to add a location");
+            updateUserInfo("gender", userData.gender || "Click to add gender");
+            updateUserInfo("pronouns", userData.pronouns || "Click to add pronouns");
+            updateUserInfo("numberOfPost", userData.numberOfPost || 0); // Changed from numberOfPost to numberOfPost
+            updateUserInfo("numberOfFollowers", userData.numberOfFollowers || 0);
+            updateUserInfo("numberOfFollowing", userData.numberOfFollowing || 0);
+        } else {
+            updateUserInfo("bio", "Click to add a bio.");
+            updateUserInfo("gender", "Click to add gender");
+            updateUserInfo("pronouns", "Click to add pronouns");
+            updateUserInfo("numberOfPost", 0); // Changed from numberOfPost to numberOfPost
+            updateUserInfo("numberOfFollowers", 0);
+            updateUserInfo("numberOfFollowing", 0);
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 updateUserInfo("photoURL", user.photoURL);
                 updateUserInfo("displayName", user.displayName);
-
-                const userDocRef = doc(db, "users", user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    updateUserInfo("bio", userData.bio || "Click to add a bio.");
-                    updateUserInfo("location", userData.location || "Click to add a location");
-                    updateUserInfo("gender", userData.gender || "Click to add gender");
-                    updateUserInfo("pronouns", userData.pronouns || "Click to add pronouns");
-                    updateUserInfo("numberOfPosts", userData.numberOfPosts || 0);
-                    updateUserInfo("numberOfFollowers", userData.numberOfFollowers || 0);
-                    updateUserInfo("numberOfFollowing", userData.numberOfFollowing || 0);
-                } else {
-                    updateUserInfo("bio", "Click to add a bio.");
-                    updateUserInfo("gender", "Click to add gender");
-                    updateUserInfo("pronouns", "Click to add pronouns");
-                }
+                await fetchUserData(user.uid);
             }
         });
         return () => unsubscribe();
@@ -139,7 +145,7 @@ export default function ProfileHeaderChildrenComponent() {
             </h1>
             <div className="flex justify-center gap-x-10">
                 <h3 className="text-xl text-center font-thin text-gray-500">
-                    Posts: {userInfo.numberOfPosts}
+                    Posts: {userInfo.numberOfPost}
                 </h3>
                 <h3 className="text-xl text-center font-thin text-gray-500">
                     Followers: {userInfo.numberOfFollowers}

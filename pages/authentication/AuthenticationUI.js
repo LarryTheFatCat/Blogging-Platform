@@ -177,7 +177,7 @@ export default function AuthenticationUI() {
                     location: "",
                     pronouns: "",
                     gender: "",
-                    numberOfPost: 0,
+                    numberOfPosts: 0,
                     numberOfFollowers: 0,
                     numbersOfFollowing: 0
                 }).then(() => {
@@ -228,7 +228,7 @@ export default function AuthenticationUI() {
                 location: "",
                 pronouns: "",
                 gender: "",
-                numberOfPost: 0,
+                numberOfPosts: 0,
                 numberOfFollowers: 0,
                 numbersOfFollowing: 0
             });

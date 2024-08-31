@@ -15,9 +15,13 @@ import {
     useDisclosure
 } from "@nextui-org/react";
 import { useState, useEffect, useRef } from "react";
+import { getFirestore, doc, updateDoc, arrayUnion, increment, runTransaction } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { db } from "@/utils/firebase";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [isLoading, setIsLoading] = useState(false);
     const [input, setInput] = useState("");
     const [titleValue, setTitleValue] = useState("");
     const [titleMaxChars, setTitleMaxChars] = useState(0);
@@ -39,6 +43,7 @@ export default function ProfileBodyChildComponent() {
     const [fileError, setFileError] = useState("");
     const fileInputRef = useRef(null);
     const [hasPost, setHasPost] = useState(false);
+    const auth = getAuth();
 
     const handleInput = (e) => {
         const newInput = e.target.value;
@@ -92,9 +97,42 @@ export default function ProfileBodyChildComponent() {
         updateTitleProgressState(titleValue.length);
     }, [input, titleValue]);
 
-    const createPost = () => {
-        setHasPost(true);
-    }
+    const createPost = async () => {
+        if (!auth.currentUser) return;
+        setIsLoading(true);
+        const userRef = doc(db, "users", auth.currentUser.uid);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const userDoc = await transaction.get(userRef);
+                if (!userDoc.exists()) {
+                    throw "User document does not exist!";
+                }
+
+                const numberOfPost = userDoc.data().numberOfPost || 0;
+                const newPostNumber = numberOfPost + 1;
+
+                const newPost = {
+                    [`posts.post_${newPostNumber}`]: {
+                        title: titleValue,
+                        description: input,
+                        createdAt: new Date().toISOString(),
+                    }
+                };
+
+                transaction.update(userRef, {
+                    ...newPost,
+                    numberOfPost: increment(1)
+                });
+            });
+
+            setHasPost(true);
+            setTitleValue("");
+            setInput("");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <>
@@ -172,7 +210,7 @@ export default function ProfileBodyChildComponent() {
                                             <Button variant="bordered" color="danger" onPress={onClose}>
                                                 Cancel
                                             </Button>
-                                            <Button variant="bordered" color="primary" onClick={createPost} onPress={onClose}>
+                                            <Button isLoading={isLoading} variant="bordered" color="primary" onClick={createPost} onPress={onClose}>
                                                 Create post
                                             </Button>
                                         </ModalFooter>
