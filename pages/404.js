@@ -1,5 +1,5 @@
 import { Button, Image } from "@nextui-org/react";
-import nopage from "@/components/404/noPage.gif"
+import nopage from "@/components/404/nopage.gif"
 import { useRouter } from "next/router";
 
 function PageNotFound() {

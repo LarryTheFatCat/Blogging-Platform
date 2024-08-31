@@ -1,9 +1,9 @@
-import Login from "./authentication/Login";
+import AuthenticationUI from "./authentication/AuthenticationUI";
 
 export default function Home() {
   return (
-    <>
-    <Login/>    
-    </>
+    <div>
+      <AuthenticationUI />
+    </div>
   );
 }
