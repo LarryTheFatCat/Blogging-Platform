@@ -1,4 +1,4 @@
-# Example Blogging Application
+# Blogging Application
 
 To whomever is reading this, it was created using the following tools:
 
