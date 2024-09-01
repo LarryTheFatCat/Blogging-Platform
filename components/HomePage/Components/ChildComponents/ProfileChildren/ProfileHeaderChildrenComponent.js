@@ -47,7 +47,7 @@ export default function ProfileHeaderChildrenComponent() {
     const fetchUserData = async (uid) => {
         const userDocRef = doc(db, "users", uid);
         const userDocSnap = await getDoc(userDocRef);
-        
+
         if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
             updateUserInfo("bio", userData.bio || "Click to add a bio.");
@@ -139,7 +139,11 @@ export default function ProfileHeaderChildrenComponent() {
 
     return (
         <CardHeader className="gap-x-5 grid grid-cols-1">
-            <Avatar src={userInfo.photoURL} className="h-40 w-40 mx-auto" radius="md" />
+            <Avatar
+                src={userInfo.photoURL}
+                className="h-40 w-40 mx-auto"
+                radius="md"
+            />
             <h1 className="text-center pt-5 text-4xl">
                 {userInfo.displayName}
             </h1>
@@ -166,8 +170,23 @@ export default function ProfileHeaderChildrenComponent() {
                         maxLength={30}
                         isClearable
                     />
-                    <Button variant="bordered" color="primary" isLoading={loading} onClick={handleSaveClick}>Save</Button>
-                    <Button onClick={() => updateEditState("isEditing", false)} className="absolute right-16 top-60 w-10" color="danger" variant="bordered" isIconOnly>X</Button>
+                    <Button
+                        variant="bordered"
+                        color="primary"
+                        isLoading={loading}
+                        onClick={handleSaveClick}
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        onClick={() => updateEditState("isEditing", false)}
+                        className="absolute right-16 top-60 w-10"
+                        color="danger"
+                        variant="bordered"
+                        isIconOnly
+                    >
+                        X
+                    </Button>
                 </div>
             ) : (
                 <>
@@ -191,13 +210,31 @@ export default function ProfileHeaderChildrenComponent() {
                                     onChange={(e) => updateUserInfo("location", e.target.value)}
                                     isClearable
                                 />
-                                <Button variant="bordered" color="primary" isLoading={loading} onClick={handleLocationClick}>Save</Button>
-                                <Button onClick={() => updateEditState("addLocation", false)} className="absolute right-16 top-60 w-10" color="danger" variant="bordered" isIconOnly>X</Button>
+                                <Button
+                                    variant="bordered"
+                                    color="primary"
+                                    isLoading={loading}
+                                    onClick={handleLocationClick}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    onClick={() => updateEditState("addLocation", false)}
+                                    className="absolute right-16 top-60 w-10"
+                                    color="danger"
+                                    variant="bordered"
+                                    isIconOnly
+                                >
+                                    X
+                                </Button>
                             </div>
                             :
                             <>
                                 <LocationIcon className="self-center" />
-                                <p className="text-center text-lg text-gray-500 font-thin cursor-pointer" onClick={() => updateEditState("addLocation", true)}>
+                                <p
+                                    className="text-center text-lg text-gray-500 font-thin cursor-pointer"
+                                    onClick={() => updateEditState("addLocation", true)}
+                                >
                                     {userInfo.location}
                                 </p>
                             </>
@@ -230,7 +267,10 @@ export default function ProfileHeaderChildrenComponent() {
                         ) : (
                             <>
                                 <GenderIcon className="self-center" />
-                                <p className="text-center text-lg text-gray-500 font-thin cursor-pointer" onClick={() => updateEditState("editingGender", true)}>
+                                <p
+                                    className="text-center text-lg text-gray-500 font-thin cursor-pointer"
+                                    onClick={() => updateEditState("editingGender", true)}
+                                >
                                     {userInfo.gender}
                                 </p>
                             </>
@@ -247,13 +287,33 @@ export default function ProfileHeaderChildrenComponent() {
                                     onChange={(e) => updateUserInfo("pronouns", e.target.value)}
                                     isClearable
                                 />
-                                <Button variant="bordered" color="primary" isLoading={loading} onClick={handlePronounsSave}>Save</Button>
-                                <Button onClick={() => updateEditState("editingPronouns", false)} className="absolute right-16 top-60 w-10" color="danger" variant="bordered" isIconOnly>X</Button>
+                                <Button
+                                    variant="bordered"
+                                    color="primary"
+                                    isLoading={loading}
+                                    onClick={handlePronounsSave}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    onClick={() => updateEditState("editingPronouns", false)}
+                                    className="absolute right-16 top-60 w-10"
+                                    color="danger"
+                                    variant="bordered"
+                                    isIconOnly
+                                >
+                                    X
+                                </Button>
                             </div>
                         ) : (
                             <>
-                                <PronounsIcon className="self-center" />
-                                <p className="text-center text-lg text-gray-500 font-thin cursor-pointer" onClick={() => updateEditState("editingPronouns", true)}>
+                                <PronounsIcon
+                                    className="self-center"
+                                />
+                                <p
+                                    className="text-center text-lg text-gray-500 font-thin cursor-pointer"
+                                    onClick={() => updateEditState("editingPronouns", true)}
+                                >
                                     {userInfo.pronouns}
                                 </p>
                             </>

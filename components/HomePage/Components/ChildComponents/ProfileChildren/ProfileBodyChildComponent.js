@@ -16,12 +16,18 @@ import {
     Card,
     CardHeader,
     CardBody,
-    User
+    User,
+    Popover,
+    PopoverTrigger,
+    PopoverContent
 } from "@nextui-org/react";
 import { useState, useEffect, useRef } from "react";
-import { doc, getDoc, increment, runTransaction } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, increment, runTransaction } from "firebase/firestore";
 import { auth, db } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import PopoverIcon from "@/components/icons/PopoverIcon";
+import Delete from "@/components/icons/Delete";
+import { ref } from "firebase/storage";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -168,6 +174,28 @@ export default function ProfileBodyChildComponent() {
         }
     };
 
+    const deletePost = async (postId) => {
+        setIsLoading(true);
+        if (!auth.currentUser) return;
+        const documentReference = doc(db, "users", auth.currentUser.uid);
+        await runTransaction(db, async (transaction) => {
+            const userDocument = await transaction.get(documentReference);
+            if (!userDocument.exists()) return;
+            if (userDocument.exists()) {
+                const userData = userDocument.data();
+                const updatedPost = { ...userData.posts };
+                delete updatedPost[postId]
+                transaction.update(documentReference, {
+                    posts: updatedPost,
+                    numberOfPost: increment(-1),
+                    numberOfPost: increment(-1),
+                });
+            };
+        });
+        window.location.reload();
+        setIsLoading(false);
+    }
+
     return (
         <>
             <Tabs aria-label="Profile tabs" className="mx-auto">
@@ -268,6 +296,21 @@ export default function ProfileBodyChildComponent() {
                                                 <p className="text-gray-500 font-thin self-center absolute right-5 text-sm">
                                                     {post.createdAt}
                                                 </p>
+                                                <Popover showArrow={true}>
+                                                    <PopoverTrigger>
+                                                        <Button variant="light" isIconOnly>
+                                                            <PopoverIcon />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent>
+                                                        <div>
+                                                            <Button isLoading={isLoading} onClick={() => deletePost(post.id)} variant="bordered" color="danger">
+                                                                <Delete />
+                                                                Delete Post
+                                                            </Button>
+                                                        </div>
+                                                    </PopoverContent>
+                                                </Popover>
                                             </div>
                                             <h1 className="text-2xl font-semibold">
                                                 {post.title}
