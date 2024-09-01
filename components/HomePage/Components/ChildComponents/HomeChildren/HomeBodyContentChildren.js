@@ -1,7 +1,7 @@
 import { auth, db } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { Card, CardHeader, CardBody, User } from "@nextui-org/react";
 
 export default function HomeBodyContentChildren() {
@@ -58,10 +58,10 @@ export default function HomeBodyContentChildren() {
                             <Card key={post.id} className="p-5">
                                 <CardHeader>
                                     <div>
-                                        <User 
-                                        avatarProps={{src: post.userPhotoURL}} 
-                                        name={post.userDisplayName} 
-                                        description={post.userEmail} />
+                                        <User
+                                            avatarProps={{ src: post.userPhotoURL }}
+                                            name={post.userDisplayName}
+                                            description={post.userEmail} />
                                         <h1 className="text-2xl font-semibold">
                                             {post.title}
                                         </h1>

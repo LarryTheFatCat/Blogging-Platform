@@ -1,8 +1,8 @@
 import { auth } from "@/utils/firebase";
-import { Avatar, Button, Card, CardBody, CardHeader, Divider, Popover, PopoverTrigger, PopoverContent, User } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Divider, Popover, PopoverTrigger, PopoverContent, User } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { FaUser, FaHome, FaCompass, FaList, FaBookmark, FaCog, FaBars } from 'react-icons/fa';
+import { FaUser, FaHome, FaCog, FaBars } from 'react-icons/fa';
 
 export default function Sidebar({ onItemSelect }) {
     const [avatarURL, setAvatarURL] = useState(null);
