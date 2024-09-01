@@ -150,7 +150,7 @@ export default function ProfileBodyChildComponent() {
                     [`posts.post_${newPostNumber}`]: {
                         title: titleValue,
                         description: input,
-                        createdAt: new Date().toISOString(),
+                        createdAt: new Date().toISOString().split("T")[0],
                     }
                 };
 
@@ -259,10 +259,16 @@ export default function ProfileBodyChildComponent() {
                                 <Card key={post.id} className="p-5">
                                     <CardHeader>
                                         <div>
-                                            <User 
-                                            avatarProps={{src: user.photoURL}} 
-                                            name={user.displayName} 
-                                            description={user.email} />
+                                            <div className="flex justify-between">
+                                                <User
+                                                    avatarProps={{ src: user.photoURL }}
+                                                    name={user.displayName}
+                                                    description={user.email}
+                                                />
+                                                <p className="text-gray-500 font-thin self-center absolute right-5 text-sm">
+                                                    {post.createdAt}
+                                                </p>
+                                            </div>
                                             <h1 className="text-2xl font-semibold">
                                                 {post.title}
                                             </h1>

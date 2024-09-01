@@ -22,7 +22,7 @@ export default function FirstAndLastNameChildComponent() {
         updatedLastName: "",
     });
     const [lastUpdateTime, setLastUpdateTime] = useState(0);
-    const UPDATE_COOLDOWN = 60000; // if user updates, return with a 1 minute cooldown
+    const UPDATE_COOLDOWN = 60000;
 
     useEffect(() => {
         const fetchUserName = async () => {

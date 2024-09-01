@@ -58,10 +58,15 @@ export default function HomeBodyContentChildren() {
                             <Card key={post.id} className="p-5">
                                 <CardHeader>
                                     <div>
-                                        <User
-                                            avatarProps={{ src: post.userPhotoURL }}
-                                            name={post.userDisplayName}
-                                            description={post.userEmail} />
+                                        <div className="flex">
+                                            <User
+                                                avatarProps={{ src: post.userPhotoURL }}
+                                                name={post.userDisplayName}
+                                                description={post.userEmail} />
+                                            <p className="text-gray-500 font-thin self-center absolute right-5 text-sm">
+                                                {post.createdAt}
+                                            </p>
+                                        </div>
                                         <h1 className="text-2xl font-semibold">
                                             {post.title}
                                         </h1>
