@@ -22,12 +22,11 @@ import {
     PopoverContent
 } from "@nextui-org/react";
 import { useState, useEffect, useRef } from "react";
-import { deleteDoc, doc, getDoc, increment, runTransaction } from "firebase/firestore";
+import { doc, getDoc, increment, runTransaction } from "firebase/firestore";
 import { auth, db } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import PopoverIcon from "@/components/icons/PopoverIcon";
 import Delete from "@/components/icons/Delete";
-import { ref } from "firebase/storage";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -42,6 +41,7 @@ export default function ProfileBodyChildComponent() {
         dangerState: "danger",
         currentState: "primary"
     });
+    const [hidden, setHidden] = useState(true);
     const [progressState, setProgressState] = useState(
         {
             primaryState: "primary",
@@ -284,7 +284,7 @@ export default function ProfileBodyChildComponent() {
                     {hasPost ? (
                         <div className="mt-5 space-y-4">
                             {posts.map((post) => (
-                                <Card key={post.id} className="p-5">
+                                <Card className={`p-5`} key={post.id}>
                                     <CardHeader>
                                         <div>
                                             <div className="flex justify-between">
