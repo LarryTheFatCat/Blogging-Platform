@@ -2,18 +2,23 @@ import { auth, db } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { Card, CardHeader, CardBody, User } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, User, Tooltip } from "@nextui-org/react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function HomeBodyContentChildren() {
+    const router = useRouter();
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [toggleProfile, setToggleProfile] = useState(false);
     const [hasPost, setHasPost] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (!currentUser) router.push("/");
             if (currentUser) {
                 setUser(currentUser);
-                fetchPosts(currentUser.uid);
+                fetchPosts();
             } else {
                 setUser(null);
                 setPosts([]);
@@ -59,10 +64,19 @@ export default function HomeBodyContentChildren() {
                                 <CardHeader>
                                     <div>
                                         <div className="flex">
-                                            <User
-                                                avatarProps={{ src: post.userPhotoURL }}
-                                                name={post.userDisplayName}
-                                                description={post.userEmail} />
+                                            <Tooltip onClick={() => console.log("hello")} showArrow="true" content={
+                                                <Link href={`${user.uid}/${post.userId}`}>
+                                                    <User className="cursor-pointer" avatarProps={{ src: post.userPhotoURL }} name={post.userDisplayName} description="Click to view profile" />
+                                                </Link>
+                                            }>
+                                                <User
+                                                    avatarProps={{ src: post.userPhotoURL }}
+                                                    name={post.userDisplayName}
+                                                    description={post.userEmail}
+                                                    onClick={() => setToggleProfile(!toggleProfile)}
+                                                />
+                                            </Tooltip>
+
                                             <p className="text-gray-500 font-thin self-center absolute right-5 text-sm">
                                                 {post.createdAt}
                                             </p>
