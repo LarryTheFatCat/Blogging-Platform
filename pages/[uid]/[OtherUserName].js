@@ -92,6 +92,10 @@ export default function NewUserHomepage() {
         <div className="flex items-center justify-center min-h-screen">
             <Card className="w-96">
                 <CardHeader>
+                    {/* this isn't ideal but it genuinely works */}
+                    <Button variant="light" className="absolute top-2 right-2" onClick={() => router.back()} isIconOnly>
+                        X
+                    </Button>
                     <div className="text-center mx-auto">
                         {userProfile ? (
                             <div className="text-center">
