@@ -157,7 +157,7 @@ export default function NewUserHomepage() {
                             </AccordionItem>
                         </Accordion>
                     </div>
-                    <div className="grid grid-cols-2">
+                    <div className="grid">
                         {toggleButton
                             ?
                             <Button isLoading={loading} onClick={removeFollower} variant="bordered" color="primary">
