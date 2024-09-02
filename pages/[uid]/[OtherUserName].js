@@ -18,7 +18,7 @@ export default function NewUserHomepage() {
     const [loading, setLoading] = useState(false);
     const [preventSelfFollow, setPreventSelfFollow] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
-    
+
     useEffect(() => {
         // Fetch user profile data when the router is ready
         async function fetchUserProfile() {
@@ -170,9 +170,6 @@ export default function NewUserHomepage() {
                                 </Button>
                             </Tooltip>
                         }
-                        <Button variant="bordered" color="danger">
-                            Block
-                        </Button>
                     </div>
                 </CardBody>
             </Card>
