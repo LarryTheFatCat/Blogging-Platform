@@ -27,6 +27,7 @@ import { auth, db } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import PopoverIcon from "@/components/icons/PopoverIcon";
 import Delete from "@/components/icons/Delete";
+import Loading from "@/pages/Loading";
 
 export default function ProfileBodyChildComponent() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -324,9 +325,12 @@ export default function ProfileBodyChildComponent() {
                             ))}
                         </div>
                     ) : (
-                        <h1 className="text-4xl text-center font-bold w-[50%] mx-auto pt-10">
-                            Seems pretty empty here... Make a post to get started!
-                        </h1>
+                        <>
+                            <Loading />
+                            <h1 className="text-4xl text-center font-bold w-[50%] mx-auto pt-10">
+                                Seems pretty empty here... Make a post to get started!
+                            </h1>
+                        </>
                     )}
                 </Tab>
                 <Tab key="liked-posts" title={

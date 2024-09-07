@@ -50,11 +50,12 @@ export default function ProfileHeaderChildrenComponent() {
 
         if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
+            console.log(userData);
             updateUserInfo("bio", userData.bio || "Click to add a bio.");
             updateUserInfo("location", userData.location || "Click to add a location");
             updateUserInfo("gender", userData.gender || "Click to add gender");
             updateUserInfo("pronouns", userData.pronouns || "Click to add pronouns");
-            updateUserInfo("numberOfPost", userData.numberOfPost || 0); // Changed from numberOfPost to numberOfPost
+            updateUserInfo("numberOfPost", userData.numberOfPost || 0);
             updateUserInfo("numberOfFollowers", userData.numberOfFollowers || 0);
             updateUserInfo("numberOfFollowing", userData.numberOfFollowing || 0);
         } else {

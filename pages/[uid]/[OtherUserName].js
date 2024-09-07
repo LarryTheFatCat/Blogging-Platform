@@ -62,10 +62,19 @@ export default function NewUserHomepage() {
 
         setLoading(true);
         try {
+            const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const mainUserReference = doc(db, "users", user.uid);
+                    await updateDoc(mainUserReference, {
+                        numberOfFollowing: increment(1),
+                    });
+                }
+            });
             const userReference = doc(db, "users", userProfile.uid);
             await updateDoc(userReference, {
                 numberOfFollowers: increment(1)
             });
+            unsubscribe();
             setToggleButton(true);
         } catch (e) {
             alert(e);
