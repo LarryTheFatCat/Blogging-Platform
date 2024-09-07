@@ -9,13 +9,6 @@ import {
     DropdownMenu,
     DropdownItem,
     Divider,
-    Modal,
-    useDisclosure,
-    ModalHeader,
-    ModalContent,
-    ModalFooter,
-    ModalBody,
-    User
 } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -24,9 +17,9 @@ import BioIcon from "@/components/icons/BioIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import GenderIcon from "@/components/icons/GenderIcon";
 import PronounsIcon from "@/components/icons/PronounsIcon";
+import { useRouter } from "next/router";
 
 export default function ProfileHeaderChildrenComponent() {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [userInfo, setUserInfo] = useState({
         photoURL: null,
         displayName: null,
@@ -170,13 +163,12 @@ export default function ProfileHeaderChildrenComponent() {
                 ...prevState,
                 editingOtherGender: true,
             }));
-            // Do not update gender here; wait for user input
         } else {
             setEditStates(prevState => ({
                 ...prevState,
                 editingOtherGender: false,
             }));
-            updateUserInfo("gender", key); // Set the gender directly here
+            updateUserInfo("gender", key);
         }
     };
 
@@ -208,49 +200,21 @@ export default function ProfileHeaderChildrenComponent() {
                 {userInfo.displayName}
             </h1>
             <div className="flex justify-center gap-x-10">
-                <h3 className="text-xl text-center font-thin text-gray-500">
-                    Posts: {userInfo.numberOfPost}
-                </h3>
-                <h3 className="text-xl text-center font-thin text-gray-500">
-                    Followers: {userInfo.numberOfFollowers}
-                </h3>
-                {/* <Button onPress={onOpen}>
-                    <h3 className="text-xl text-center font-thin text-gray-500 hover:underline hover:cursor-pointer">
-                        Following: {userInfo.numberOfFollowing}
+                <Button variant="light">
+                    <h3 className="text-xl text-center font-thin text-gray-500">
+                        Followers: {userInfo.numberOfFollowers}
                     </h3>
-                </Button> */}
-                <Button variant="light" onPress={onOpen} className="hover:underline hover:cursor-pointer">
+                </Button>
+                <Button variant="light" className="hover:underline hover:cursor-pointer">
+                    <h3 className="text-xl text-center font-thin text-gray-500">
+                        Followers: {userInfo.numberOfFollowers}
+                    </h3>
+                </Button>
+                <Button variant="light" className="hover:underline hover:cursor-pointer">
                     <h3 className="text-xl text-center font-thin text-gray-500">
                         Following: {userInfo.numberOfFollowing}
                     </h3>
                 </Button>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader className="flex flex-col gap-1 text-center">
-                                    <h3 className="text-2xl text-center font-bold">
-                                        Following
-                                    </h3>
-                                </ModalHeader>
-                                <Divider />
-                                <ModalBody>
-                                    {followingProfiles.map(profile => (
-                                        <div key={profile.uid} className="flex items-center">
-                                            <User avatarProps={{src: profile.photoURL}} name={profile.username} description={profile.email} />
-                                            <p className="ml-2">{profile.displayName}</p>
-                                        </div>
-                                    ))}
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button color="danger" variant="light" onPress={onClose}>
-                                        Close
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
             </div>
             <Divider className="my-3" />
             {editStates.isEditing ? (
