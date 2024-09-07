@@ -1,5 +1,22 @@
 import { auth, db } from "@/utils/firebase";
-import { Avatar, CardHeader, Input, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider, Modal, useDisclosure, ModalHeader, ModalContent, ModalFooter, ModalBody } from "@nextui-org/react";
+import {
+    Avatar,
+    CardHeader,
+    Input,
+    Button,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    Divider,
+    Modal,
+    useDisclosure,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    ModalBody,
+    User
+} from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -36,6 +53,9 @@ export default function ProfileHeaderChildrenComponent() {
 
     const [loading, setLoading] = useState(false);
 
+    // Add this new state to hold the following profiles
+    const [followingProfiles, setFollowingProfiles] = useState([]);
+
     // Update functions for userInfo and editStates
     const updateUserInfo = (field, value) => {
         setUserInfo(prev => ({ ...prev, [field]: value }));
@@ -59,6 +79,7 @@ export default function ProfileHeaderChildrenComponent() {
             updateUserInfo("numberOfPost", userData.numberOfPost || 0);
             updateUserInfo("numberOfFollowers", userData.numberOfFollowers || 0);
             updateUserInfo("numberOfFollowing", userData.numberOfFollowing || 0);
+            updateUserInfo("numberOfFollowingList", userData.numberOfFollowingList || 0);
         } else {
             updateUserInfo("bio", "Click to add a bio.");
             updateUserInfo("gender", "Click to add gender");
@@ -71,6 +92,7 @@ export default function ProfileHeaderChildrenComponent() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
             if (user) {
                 updateUserInfo("photoURL", user.photoURL);
                 updateUserInfo("displayName", user.displayName);
@@ -158,14 +180,22 @@ export default function ProfileHeaderChildrenComponent() {
         }
     };
 
-    // Add this function to handle saving the "Other" gender input
-    const handleOtherGenderSave = () => {
-        updateUserInfo("gender", otherGender); // Update gender with the input value
-        setEditStates(prevState => ({
-            ...prevState,
-            editingOtherGender: false,
+    // Function to fetch profiles of users being followed
+    const fetchFollowingProfiles = async () => {
+        const profiles = await Promise.all(userInfo.numberOfFollowingList.map(async (uid) => {
+            const userDocumentReference = doc(db, "users", uid);
+            const userDocumentSnapshot = await getDoc(userDocumentReference);
+            return userDocumentSnapshot.exists() ? userDocumentSnapshot.data() : null; // Return profile data or null
         }));
+        setFollowingProfiles(profiles.filter(profile => profile !== null)); // Filter out nulls
     };
+
+    // Call fetchFollowingProfiles when userInfo.numberOfFollowingList changes
+    useEffect(() => {
+        if (userInfo.numberOfFollowingList.length >= 0) {
+            fetchFollowingProfiles();
+        }
+    }, [userInfo.numberOfFollowingList]);
 
     return (
         <CardHeader className="gap-x-5 grid grid-cols-1">
@@ -203,15 +233,18 @@ export default function ProfileHeaderChildrenComponent() {
                                         Following
                                     </h3>
                                 </ModalHeader>
+                                <Divider />
                                 <ModalBody>
-                                    soon
+                                    {followingProfiles.map(profile => (
+                                        <div key={profile.uid} className="flex items-center">
+                                            <User avatarProps={{src: profile.photoURL}} name={profile.username} description={profile.email} />
+                                            <p className="ml-2">{profile.displayName}</p>
+                                        </div>
+                                    ))}
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="danger" variant="light" onPress={onClose}>
                                         Close
-                                    </Button>
-                                    <Button color="primary" onPress={onClose}>
-                                        Action
                                     </Button>
                                 </ModalFooter>
                             </>

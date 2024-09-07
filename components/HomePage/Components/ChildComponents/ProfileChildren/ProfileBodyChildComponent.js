@@ -258,16 +258,6 @@ export default function ProfileBodyChildComponent() {
                                                     />
                                                 }
                                             />
-                                            <Input
-                                                type="file"
-                                                label="Upload an image to post"
-                                                color="primary"
-                                                variant="faded"
-                                                accept="image/*"
-                                                onChange={handleFileChange}
-                                                ref={fileInputRef}
-                                                description={fileError && <span className="text-danger">{fileError}</span>}
-                                            />
                                         </ModalBody>
                                         <ModalFooter>
                                             <Button variant="bordered" color="danger" onPress={onClose}>

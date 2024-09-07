@@ -245,6 +245,22 @@ export default function AuthenticationUI() {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             const uid = user.uid;
+            await setDoc(doc(db, "users", uid), {
+                email: registerInput.email,
+                password: registerInput.password,
+                username: registerInput.username,
+                uid: uid,
+                bio: "",
+                location: "",
+                pronouns: "",
+                gender: "",
+                numberOfPosts: 0,
+                numberOfFollowers: 0,
+                numbersOfFollowing: 0,
+                numberOfPostsList: [],
+                numberOfFollowersList: [],
+                numberOfFollowingList: [],
+            })
             await createOrUpdateUserDocument(user);
             router.push(`${uid}/`);
         } catch (error) {

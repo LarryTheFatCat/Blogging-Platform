@@ -67,6 +67,7 @@ export default function NewUserHomepage() {
                     const mainUserReference = doc(db, "users", user.uid);
                     await updateDoc(mainUserReference, {
                         numberOfFollowing: increment(1),
+                        numberOfFollowingList: [userProfile.uid]
                     });
                 }
             });

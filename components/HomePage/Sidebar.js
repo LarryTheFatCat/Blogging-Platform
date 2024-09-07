@@ -49,7 +49,7 @@ export default function Sidebar({ onItemSelect }) {
                     <CardHeader className="grid grid-cols-1">
                         <div>
                             <h1 className="text-xl text-gray-400 font-thin">
-                                Welcome {userInfo.username}
+                                Welcome, {userInfo.username}
                             </h1>
                         </div>
                         <User className="justify-start pt-5 pl-3 pb-3" avatarProps={{ src: avatarURL }} name={userInfo.username} description={userInfo.email} />
