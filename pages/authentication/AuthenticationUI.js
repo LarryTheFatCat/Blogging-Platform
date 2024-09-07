@@ -201,7 +201,10 @@ export default function AuthenticationUI() {
                     gender: "",
                     numberOfPosts: 0,
                     numberOfFollowers: 0,
-                    numbersOfFollowing: 0
+                    numbersOfFollowing: 0,
+                    numberOfPostsList: [],
+                    numberOfFollowersList: [],
+                    numberOfFollowingList: [],
                 }).then(() => {
                     setLoading(false);
                     setRegister(false);

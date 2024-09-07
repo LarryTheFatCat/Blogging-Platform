@@ -1,5 +1,5 @@
 import { auth, db } from "@/utils/firebase";
-import { Avatar, CardHeader, Input, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider } from "@nextui-org/react";
+import { Avatar, CardHeader, Input, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider, Modal, useDisclosure, ModalHeader, ModalContent, ModalFooter, ModalBody } from "@nextui-org/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -9,29 +9,30 @@ import GenderIcon from "@/components/icons/GenderIcon";
 import PronounsIcon from "@/components/icons/PronounsIcon";
 
 export default function ProfileHeaderChildrenComponent() {
-    const [userInfo, setUserInfo] = useState(
-        {
-            photoURL: null,
-            displayName: null,
-            bio: "",
-            editedBio: "",
-            location: "",
-            gender: "",
-            pronouns: "",
-            numberOfPost: 0,
-            numberOfFollowers: 0,
-            numberOfFollowing: 0
-        }
-    );
-
-    const [editStates, setEditStates] = useState(
-        {
-            isEditing: false,
-            addLocation: false,
-            editingGender: false,
-            editingPronouns: false
-        }
-    );
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [userInfo, setUserInfo] = useState({
+        photoURL: null,
+        displayName: null,
+        bio: "",
+        editedBio: "",
+        location: "",
+        gender: "",
+        pronouns: "",
+        numberOfPost: 0,
+        numberOfFollowers: 0,
+        numberOfFollowing: 0,
+        numberOfPostList: [],
+        numberOfFollowersList: [],
+        numberOfFollowingList: [],
+    });
+    const [otherGender, setOtherGender] = useState("");
+    const [editStates, setEditStates] = useState({
+        isEditing: false,
+        addLocation: false,
+        editingGender: false,
+        editingOtherGender: false,
+        editingPronouns: false
+    });
 
     const [loading, setLoading] = useState(false);
 
@@ -62,7 +63,7 @@ export default function ProfileHeaderChildrenComponent() {
             updateUserInfo("bio", "Click to add a bio.");
             updateUserInfo("gender", "Click to add gender");
             updateUserInfo("pronouns", "Click to add pronouns");
-            updateUserInfo("numberOfPost", 0); // Changed from numberOfPost to numberOfPost
+            updateUserInfo("numberOfPost", 0);
             updateUserInfo("numberOfFollowers", 0);
             updateUserInfo("numberOfFollowing", 0);
         }
@@ -100,7 +101,7 @@ export default function ProfileHeaderChildrenComponent() {
         setLoading(true);
         const user = auth.currentUser;
         if (user) {
-            const uid = user.uid
+            const uid = user.uid;
             const userDocRef = doc(db, "users", uid);
             await updateDoc(userDocRef, { location: userInfo.location });
             updateEditState("addLocation", false);
@@ -117,11 +118,14 @@ export default function ProfileHeaderChildrenComponent() {
         const user = auth.currentUser;
         if (user) {
             const userDocRef = doc(db, "users", user.uid);
-            await updateDoc(userDocRef, { gender: userInfo.gender });
+            const genderToSave = editStates.editingOtherGender ? otherGender : userInfo.gender; // Check if "Other" is being edited
+            await updateDoc(userDocRef, { gender: genderToSave });
+            updateUserInfo("gender", genderToSave); // Update the user info with the selected gender
             updateEditState("editingGender", false);
             setLoading(false);
         }
     };
+    console.log(userInfo.gender);
 
     const handlePronounsSave = async () => {
         setLoading(true);
@@ -134,8 +138,33 @@ export default function ProfileHeaderChildrenComponent() {
         }
     };
 
-    const handleGenderSelect = (key) => {
-        updateUserInfo("gender", key);
+    // const handleGenderSelect = (key) => {
+    //     updateUserInfo("gender", key);
+    // };
+    console.log(otherGender);
+    const handleAction = (key) => {
+        if (key === "Other") {
+            setEditStates(prevState => ({
+                ...prevState,
+                editingOtherGender: true,
+            }));
+            // Do not update gender here; wait for user input
+        } else {
+            setEditStates(prevState => ({
+                ...prevState,
+                editingOtherGender: false,
+            }));
+            updateUserInfo("gender", key); // Set the gender directly here
+        }
+    };
+
+    // Add this function to handle saving the "Other" gender input
+    const handleOtherGenderSave = () => {
+        updateUserInfo("gender", otherGender); // Update gender with the input value
+        setEditStates(prevState => ({
+            ...prevState,
+            editingOtherGender: false,
+        }));
     };
 
     return (
@@ -155,9 +184,40 @@ export default function ProfileHeaderChildrenComponent() {
                 <h3 className="text-xl text-center font-thin text-gray-500">
                     Followers: {userInfo.numberOfFollowers}
                 </h3>
-                <h3 className="text-xl text-center font-thin text-gray-500">
-                    Following: {userInfo.numberOfFollowing}
-                </h3>
+                {/* <Button onPress={onOpen}>
+                    <h3 className="text-xl text-center font-thin text-gray-500 hover:underline hover:cursor-pointer">
+                        Following: {userInfo.numberOfFollowing}
+                    </h3>
+                </Button> */}
+                <Button variant="light" onPress={onOpen} className="hover:underline hover:cursor-pointer">
+                    <h3 className="text-xl text-center font-thin text-gray-500">
+                        Following: {userInfo.numberOfFollowing}
+                    </h3>
+                </Button>
+                <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1 text-center">
+                                    <h3 className="text-2xl text-center font-bold">
+                                        Following
+                                    </h3>
+                                </ModalHeader>
+                                <ModalBody>
+                                    soon
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" variant="light" onPress={onClose}>
+                                        Close
+                                    </Button>
+                                    <Button color="primary" onPress={onClose}>
+                                        Action
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
             </div>
             <Divider className="my-3" />
             {editStates.isEditing ? (
@@ -252,7 +312,7 @@ export default function ProfileHeaderChildrenComponent() {
                                     </DropdownTrigger>
                                     <DropdownMenu
                                         aria-label="Gender selection"
-                                        onAction={handleGenderSelect}
+                                        onAction={handleAction}
                                         selectedKeys={new Set([userInfo.gender])}
                                         selectionMode="single"
                                     >
@@ -262,6 +322,15 @@ export default function ProfileHeaderChildrenComponent() {
                                         <DropdownItem key="Other">Other</DropdownItem>
                                     </DropdownMenu>
                                 </Dropdown>
+                                {editStates.editingOtherGender && (
+                                    <Input
+                                        label="Other"
+                                        placeholder="Enter your identity"
+                                        labelPlacement="outside"
+                                        value={otherGender}
+                                        onChange={(e) => setOtherGender(e.target.value)}
+                                    />
+                                )}
                                 <Button variant="bordered" color="primary" isLoading={loading} onClick={handleGenderSave}>Save</Button>
                                 <Button onClick={() => updateEditState("editingGender", false)} className="absolute right-16 top-60 w-10" color="danger" variant="bordered" isIconOnly>X</Button>
                             </div>

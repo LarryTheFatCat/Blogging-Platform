@@ -33,7 +33,7 @@ export default function FirstAndLastNameChildComponent() {
                 const documentSnapshot = await getDoc(documentReference);
 
                 if (documentSnapshot.exists()) {
-                    let name = documentSnapshot.data().username.split(' ');
+                    let name = documentSnapshot.data();
                     setNameInfo({
                         firstName: name[0],
                         lastName: name[1],
