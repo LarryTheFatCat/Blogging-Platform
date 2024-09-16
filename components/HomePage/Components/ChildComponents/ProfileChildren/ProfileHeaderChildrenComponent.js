@@ -17,7 +17,6 @@ import BioIcon from "@/components/icons/BioIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import GenderIcon from "@/components/icons/GenderIcon";
 import PronounsIcon from "@/components/icons/PronounsIcon";
-import { useRouter } from "next/router";
 
 export default function ProfileHeaderChildrenComponent() {
     const [userInfo, setUserInfo] = useState({
@@ -225,7 +224,7 @@ export default function ProfileHeaderChildrenComponent() {
                         value={userInfo.editedBio}
                         placeholder="Enter your bio"
                         onChange={(e) => updateUserInfo("editedBio", e.target.value)}
-                        maxLength={30}
+                        maxLength={120}
                         isClearable
                     />
                     <Button

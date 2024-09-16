@@ -42,7 +42,6 @@ export default function ProfileBodyChildComponent() {
         dangerState: "danger",
         currentState: "primary"
     });
-    const [hidden, setHidden] = useState(true);
     const [progressState, setProgressState] = useState(
         {
             primaryState: "primary",
@@ -52,8 +51,6 @@ export default function ProfileBodyChildComponent() {
     );
     const [maxChars, setMaxChars] = useState(0);
     const MAX_CHARS = 280;
-    const [fileError, setFileError] = useState("");
-    const fileInputRef = useRef(null);
     const [hasPost, setHasPost] = useState(false);
     const [posts, setPosts] = useState([]);
 
@@ -89,20 +86,6 @@ export default function ProfileBodyChildComponent() {
             setTitleProgressState(prev => ({ ...prev, currentState: "primary" }));
         }
     }
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.type.startsWith('image/')) {
-                setFileError("");
-            } else {
-                setFileError("Please upload only image files.");
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = "";
-                }
-            }
-        }
-    };
 
     useEffect(() => {
         updateProgressState(input.length);
@@ -317,9 +300,6 @@ export default function ProfileBodyChildComponent() {
                     ) : (
                         <>
                             <Loading />
-                            <h1 className="text-4xl text-center font-bold w-[50%] mx-auto pt-10">
-                                Seems pretty empty here... Make a post to get started!
-                            </h1>
                         </>
                     )}
                 </Tab>

@@ -5,6 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { Card, CardHeader, CardBody, User, Tooltip } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Loading from "@/pages/Loading";
 
 export default function HomeBodyContentChildren() {
     const router = useRouter();
@@ -93,9 +94,9 @@ export default function HomeBodyContentChildren() {
                         ))}
                     </div>
                 ) : (
-                    <h1 className="text-4xl text-center font-bold w-[50%] mx-auto pt-10">
-                        Seems pretty empty here... Make a post to get started!
-                    </h1>
+                    <>
+                    <Loading />
+                    </>
                 )
             ) : (
                 <p>Please sign in to view posts.</p>
