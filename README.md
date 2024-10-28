@@ -68,5 +68,3 @@ If you encounter any problems or have suggestions for improvements, please open 
 4. Actual behavior
 5. Screenshots (if applicable)
 6. Your environment (OS, browser, version, etc.)
-
-We appreciate your feedback and contributions to make this project better!
